@@ -22,11 +22,16 @@
     "url": "https://github.com/smollweide/lerna-terminal/issues"
   },
   "homepage": "https://github.com/smollweide/lerna-terminal#readme",
-  "bin": "src/index.js",
+  "bin": "dist/index.js",
   "engines": {
     "node": ">=6.0.0",
     "npm": ">=3.0.0"
   },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "prettier": {
     "useTabs": true,
     "printWidth": 120,
@@ -57,8 +62,13 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
+  "babel": {
+    "presets": ["env"]
+  },
   "devDependencies": {
     "@namics/eslint-config": "4.1.0",
+    "babel-cli": "6.26.0",
+    "babel-preset-env": "1.6.1",
     "commitizen": "2.9.6",
     "coveralls": "3.0.0",
     "cross-env": "5.1.0",
@@ -81,6 +91,10 @@
   "scripts": {
     "commit": "git-cz",
     "precommit": "lint-staged && npm-run-all lint test",
+    "prebuild": "rimraf build",
+    "build": "node_modules/.bin/babel --out-dir dist --ignore *.spec.js src",
+    "prepack": "rimraf lerna-terminal-0.0.0-semantically-released.tgz package",
+    "pack": "npm pack && open lerna-terminal-0.0.0-semantically-released.tgz",
     "check-coverage": "node_modules/.bin/istanbul check-coverage --statements 80 --functions 80 --lines 100",
     "report-coverage": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "pretest": "rimraf coverage",

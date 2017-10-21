@@ -6,6 +6,11 @@
 # testing
 /coverage
 
+# build
+/dist
+lerna-terminal-0.0.0-semantically-released.tgz
+/package
+
 # misc
 .DS_Store
 .idea
