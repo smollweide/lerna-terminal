@@ -82,6 +82,7 @@
     "commit": "git-cz",
     "precommit": "lint-staged && npm-run-all lint test",
     "check-coverage": "node_modules/.bin/istanbul check-coverage --statements 80 --functions 80 --lines 100",
+    "report-coverage": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "pretest": "rimraf coverage",
     "test": "cross-env NODE_ENV=test node_modules/.bin/jest --coverage",
     "test:dev": "cross-env NODE_ENV=test node_modules/.bin/jest --watch --notify",
