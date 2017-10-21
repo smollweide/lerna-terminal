@@ -10,6 +10,19 @@ const { program } = require('./commander');
 
 /* istanbul ignore next */
 const themeSymbolMap = {
+	test: {
+		title: text => text,
+		msg: text => text,
+		error: text => text,
+		titleSpace: ' ',
+		topLeft: '┌',
+		topRight: '┐',
+		content: '│',
+		separatorTop: '─',
+		separatorBottom: '─',
+		bottomLeft: '└',
+		bottomRight: '┘',
+	},
 	default: {
 		title: text => chalk.blue.bgWhite.bold(text),
 		msg: text => text,
@@ -56,6 +69,9 @@ const themeSymbolMap = {
  * @returns {Object} returns the package.json data object
 **/
 function getThemeSymbol(type) {
+	if (process.env.NODE_ENV === 'test') {
+		return themeSymbolMap.test[type];
+	}
 	return themeSymbolMap[program.theme || 'default'][type];
 }
 

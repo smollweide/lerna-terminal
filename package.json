@@ -64,7 +64,9 @@
     }
   },
   "babel": {
-    "presets": ["env"]
+    "presets": [
+      "env"
+    ]
   },
   "devDependencies": {
     "@namics/eslint-config": "4.1.0",
