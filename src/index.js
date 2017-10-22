@@ -35,8 +35,8 @@ commandListener(cmd => {
 		return;
 	}
 
-	if (cmd.search(/^focus/) >= 0) {
-		cmdFocus(cmd.replace(/^focus/, '').trim(), render);
+	if (cmd.search(/^exit/) >= 0) {
+		cmdFocus('', render);
 		return;
 	}
 
@@ -54,4 +54,11 @@ commandListener(cmd => {
 		cmdStart(cmd.replace(/^start/, '').trim(), render);
 		return;
 	}
+
+	if (cmd.search(/^focus/) >= 0) {
+		cmdFocus(cmd.replace(/^focus/, '').trim(), render);
+		return;
+	}
+
+	cmdFocus(cmd.trim(), render);
 });
