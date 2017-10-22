@@ -8,9 +8,6 @@
 // - execute command on childProcess
 //   -> lerna-terminal~$ cmd utils p (jest)
 //   -> focused lerna-terminal~$ p (jest)
-// - change cmd prefix in focus, help ...
-//   -> help = lerna-terminal(help)~$
-//   -> focused = lerna-terminal(utils)~$
 // - generic usage
 
 const { runCommander } = require('./commander');

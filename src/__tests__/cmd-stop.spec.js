@@ -18,27 +18,27 @@ const diState = {
 
 describe('cmdStop', () => {
 	it('execute without error', () => {
-		expect(cmdStop('utils')).toBe(undefined);
+		expect(cmdStop('utils', () => {})).toBe(undefined);
 	});
 	it('stop defined package', done => {
 		const _diState = dcopy(diState);
 		_diState.utils.terminal = {
 			stop: done,
 		};
-		cmdStop('utils', _diState);
+		cmdStop('utils', () => {}, _diState);
 	});
 	it('stop all package', done => {
 		const _diState = dcopy(diState);
 		_diState.utils.terminal = {
 			stop: done,
 		};
-		cmdStop(undefined, _diState);
+		cmdStop(undefined, () => {}, _diState);
 	});
 	it('stop all package 2', done => {
 		const _diState = dcopy(diState);
 		_diState.terminalUtils.terminal = {
 			stop: done,
 		};
-		cmdStop(undefined, _diState);
+		cmdStop(undefined, () => {}, _diState);
 	});
 });

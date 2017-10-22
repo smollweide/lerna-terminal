@@ -4,10 +4,11 @@ const { state } = require('./store');
 
 /**
  * @param {string} packageName - the package name
+ * @param {Function} render - the callback which should be a render function
  * @param {Object} diState - dependency injection state for tests
  * @returns {void}
 **/
-function cmdStop(packageName, diState = state) {
+function cmdStop(packageName, render, diState = state) {
 	if (
 		packageName &&
 		diState[packageName] &&
@@ -15,6 +16,7 @@ function cmdStop(packageName, diState = state) {
 		typeof diState[packageName].terminal.stop === 'function'
 	) {
 		diState[packageName].terminal.stop();
+		render();
 		return;
 	}
 
@@ -23,6 +25,7 @@ function cmdStop(packageName, diState = state) {
 			diState[key].terminal.stop();
 		}
 	});
+	render();
 }
 
 module.exports = cmdStop;
