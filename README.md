@@ -28,6 +28,30 @@ $ lerna-terminal --help
     $ lerna-terminal -s start -t minimal -i utils
 ```
 
+## Cli
+
+```
+lerna-terminal~$ help
+
+  Usage
+    lerna-terminal~$ [command]
+
+  Commands
+    [string]          Focus one terminal panel and update current pwd
+    focus             Leave focused mode and displays all terminal panels
+    focus [string]    Focus one terminal panel and update current pwd
+    clear             Clear all terminal panels
+    clear [string]    Clear one terminal panel
+    start             Start (or restart) the npm script (see Usage) in all terminal panels
+    start [string]    Start (or restart) the npm script (see Usage) in one terminal panels
+    stop              Stops the npm script (see Usage) in all terminal panels
+    stop [string]     Stops the npm script (see Usage) in one terminal panels
+    exit              Leave current mode and displays all terminal panels
+
+  Example
+    lerna-terminal~$ start
+```
+
 ## Related
 
 - [lerna](https://github.com/lerna/lerna) - A tool for managing JavaScript projects with multiple packages.
