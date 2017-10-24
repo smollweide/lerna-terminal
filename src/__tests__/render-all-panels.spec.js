@@ -20,6 +20,10 @@ const diState = {
 describe('renderAllPanels', () => {
 	it('default', done => {
 		renderAllPanels({
+			dimensions: {
+				width: 120,
+				height: 20,
+			},
 			state: diState,
 			log(logText) {
 				expect(typeof logText).toBe('string');
