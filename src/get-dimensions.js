@@ -1,27 +1,32 @@
 'use strict';
+const resolveDependency = require('./resolve-dependency');
 
 const dimensions = {
 	width: process.stdout.columns,
 	height: process.stdout.rows,
 };
 
-/**
- * @param {Function<string>} onResize - the callback function
- * @param {Object} diProcess - dependency injection process for tests
- * @returns {void}
-**/
-function resizeListener(onResize, diProcess = process) {
+const _resizeListener = (onResize, { _process }) => {
 	/**
 	 * @returns {void}
 	**/
 	function check() {
-		if (dimensions.width !== diProcess.stdout.columns || dimensions.height !== diProcess.stdout.rows) {
-			dimensions.width = diProcess.stdout.columns;
-			dimensions.height = diProcess.stdout.rows;
+		if (dimensions.width !== _process.stdout.columns || dimensions.height !== _process.stdout.rows) {
+			dimensions.width = _process.stdout.columns;
+			dimensions.height = _process.stdout.rows;
 			onResize();
 		}
 	}
 	setInterval(check, 500);
+};
+
+/**
+ * @param {Function<string>} onResize - the callback function
+ * @param {Object} di - dependency injection
+ * @returns {void}
+**/
+function resizeListener(onResize, di) {
+	_resizeListener(onResize, Object.assign(resolveDependency(di, 'process', process)));
 }
 
 module.exports = { dimensions, resizeListener };

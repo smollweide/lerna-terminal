@@ -69,9 +69,11 @@ const themeSymbolMap = {
  * @returns {Object} returns the package.json data object
 **/
 function getThemeSymbol(type) {
+	/* istanbul ignore next */
 	if (process.env.NODE_ENV === 'test') {
 		return themeSymbolMap.test[type];
 	}
+	/* istanbul ignore next */
 	return themeSymbolMap[program.theme || 'default'][type];
 }
 

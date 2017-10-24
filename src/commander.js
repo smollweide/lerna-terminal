@@ -1,13 +1,10 @@
 'use strict';
 
 const program = require('commander');
+const resolveDependency = require('./resolve-dependency');
 
-/**
- * @param {Object} diProgramm - dependency injection program for tests
- * @returns {void}
-**/
-function runCommander(diProgramm = program) {
-	diProgramm
+const _runCommander = ({ _program }) => {
+	_program
 		.version('0.1.0')
 		.option('-s, --script [string]', 'Define the script which should be executed')
 		.option('-i, --ignoredPackages [string]', 'Add packages which should be ignored')
@@ -15,9 +12,17 @@ function runCommander(diProgramm = program) {
 		.option('-t, --theme [string]', 'Define theme (default, minimal, massive)')
 		.parse(process.argv);
 
-	if (!diProgramm.script) {
+	if (!_program.script) {
 		throw new Error('--script is required');
 	}
+};
+
+/**
+ * @param {Object} di - dependency injection
+ * @returns {void}
+**/
+function runCommander(di) {
+	_runCommander(Object.assign(resolveDependency(di, 'program', program)));
 }
 
 module.exports = { runCommander, program };

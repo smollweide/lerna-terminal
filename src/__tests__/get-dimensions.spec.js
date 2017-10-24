@@ -14,13 +14,13 @@ dimensions.height = 20;
 describe('getDimensions', () => {
 	describe('resizeListener', () => {
 		it('execute without error', () => {
-			const _diProcess = dcopy(diProcess);
-			expect(resizeListener(undefined, _diProcess)).toBe(undefined);
+			const _process = dcopy(diProcess);
+			expect(resizeListener(undefined, { process: _process })).toBe(undefined);
 		});
 		it('onResize', done => {
-			const _diProcess = dcopy(diProcess);
-			_diProcess.stdout.columns = 22;
-			expect(resizeListener(done, _diProcess)).toBe(undefined);
+			const _process = dcopy(diProcess);
+			_process.stdout.columns = 22;
+			expect(resizeListener(done, { process: _process })).toBe(undefined);
 		});
 	});
 });

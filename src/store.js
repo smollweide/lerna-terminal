@@ -9,6 +9,7 @@ const uiState = {};
  * @returns {void}
 **/
 function provideStore() {
+	/* istanbul ignore next */
 	uiState.focus = program.focus ? program.focus : 'all';
 }
 

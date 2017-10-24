@@ -1,20 +1,13 @@
 'use strict';
-
+const resolveDependency = require('./resolve-dependency');
 const getLernaPackages = require('./get-lerna-packages');
 const getPackage = require('./get-package');
 
-/**
- * @param {Object|undefined} di - dependency injection for tests
- * @returns {Object} returns an object of available scripts as key and their packages as array
-**/
-function getScriptCommands(di) {
+const _getScriptCommands = ({ _getLernaPackages, _getPackage }) => {
 	const commands = {};
 
-	const diGetLernaPackages = di ? di.diGetLernaPackages : getLernaPackages;
-	const diGetPackage = di ? di.diGetPackage : getPackage;
-
-	diGetLernaPackages(packagePath => {
-		const packageData = diGetPackage(packagePath);
+	_getLernaPackages(packagePath => {
+		const packageData = _getPackage(packagePath);
 
 		if (!packageData.scripts) {
 			return;
@@ -29,6 +22,19 @@ function getScriptCommands(di) {
 	});
 
 	return commands;
+};
+
+/**
+ * @param {Object|undefined} di - dependency injection for tests
+ * @returns {Object} returns an object of available scripts as key and their packages as array
+**/
+function getScriptCommands(di) {
+	return _getScriptCommands(
+		Object.assign(
+			resolveDependency(di, 'getLernaPackages', getLernaPackages),
+			resolveDependency(di, 'getPackage', getPackage)
+		)
+	);
 }
 
 module.exports = getScriptCommands;

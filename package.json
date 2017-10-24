@@ -98,7 +98,7 @@
     "build": "node_modules/.bin/babel --out-dir dist --ignore *.spec.js src",
     "prepack": "rimraf lerna-terminal-0.0.0-semantically-released.tgz package",
     "pack": "npm pack && open lerna-terminal-0.0.0-semantically-released.tgz",
-    "check-coverage": "node_modules/.bin/istanbul check-coverage --statements 50 --functions 50 --lines 55",
+    "check-coverage": "node_modules/.bin/istanbul check-coverage --statements 95 --functions 95 --lines 95",
     "report-coverage": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "pretest": "rimraf coverage",
     "test": "cross-env NODE_ENV=test node_modules/.bin/jest --coverage",

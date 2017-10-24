@@ -1,12 +1,12 @@
 const dcopy = require('deep-copy');
 const getScriptCommands = require('../get-script-commands');
 
-const diGetLernaPackages = onMatch => {
+const getLernaPackages = onMatch => {
 	onMatch('path-to-package-a');
 	onMatch('path-to-package-b');
 };
 
-const diPackageData = {
+const packageData = {
 	scripts: {
 		start: 'npm run something',
 	},
@@ -14,20 +14,20 @@ const diPackageData = {
 
 describe('getScriptCommands', () => {
 	it('find scripts', () => {
-		const _packageData = dcopy(diPackageData);
+		const _packageData = dcopy(packageData);
 		expect(
 			getScriptCommands({
-				diGetLernaPackages,
-				diGetPackage: () => _packageData,
+				getLernaPackages,
+				getPackage: () => _packageData,
 			})
 		).toEqual({ start: ['path-to-package-a', 'path-to-package-b'] });
 	});
 	it('a package without scripts', () => {
-		const _packageData = dcopy(diPackageData);
+		const _packageData = dcopy(packageData);
 		expect(
 			getScriptCommands({
-				diGetLernaPackages,
-				diGetPackage: path => {
+				getLernaPackages,
+				getPackage: path => {
 					return path === 'path-to-package-a' ? _packageData : {};
 				},
 			})

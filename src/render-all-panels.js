@@ -1,5 +1,6 @@
 /* eslint no-console: 0*/
 'use strict';
+const resolveDependency = require('./resolve-dependency');
 const renderCmdPrefix = require('./render-cmd-prefix');
 const renderClear = require('./render-clear');
 const getFilledArray = require('./get-filled-array');
@@ -8,11 +9,8 @@ const { getTerminalPanel } = require('./get-terminal-panel');
 const mergePanelsRow = require('./merge-panels-row');
 const { dimensions } = require('./get-dimensions');
 
-/**
- * @returns {void}
-**/
-function renderAllPanels() {
-	const currentState = Object.assign({}, state);
+const _renderAllPanels = ({ _state, _log, _renderClear, _renderCmdPrefix }) => {
+	const currentState = Object.assign({}, _state);
 	const stateKeys = Object.keys(currentState);
 	const boardColumns = 3;
 	const panelWidth = parseInt(dimensions.width / boardColumns, 10);
@@ -21,13 +19,16 @@ function renderAllPanels() {
 	const renderArrInner = getFilledArray(boardColumns, '');
 	const renderArr = getFilledArray(boardRows, renderArrInner);
 
-	renderClear();
+	_renderClear();
 
 	// map panel into row structure
 	let counterColumn = 0;
 	let counterRow = 0;
 
 	stateKeys.forEach(packageName => {
+		if (!currentState[packageName].log) {
+			return;
+		}
 		renderArr[counterRow][counterColumn] = getTerminalPanel(
 			panelWidth,
 			panelHeight,
@@ -42,9 +43,24 @@ function renderAllPanels() {
 	});
 
 	renderArr.forEach(panelRow => {
-		console.log(mergePanelsRow(panelRow, panelHeight).join('\n'));
+		_log(mergePanelsRow(panelRow, panelHeight).join('\n'));
 	});
-	renderCmdPrefix();
+	_renderCmdPrefix();
+};
+
+/**
+ * @param {Object} di - dependency injection
+ * @returns {void}
+**/
+function renderAllPanels(di) {
+	_renderAllPanels(
+		Object.assign(
+			resolveDependency(di, 'state', state),
+			resolveDependency(di, 'log', console.log),
+			resolveDependency(di, 'renderClear', renderClear),
+			resolveDependency(di, 'renderCmdPrefix', renderCmdPrefix)
+		)
+	);
 }
 
 module.exports = renderAllPanels;
