@@ -15,6 +15,7 @@ const defaults = {
 	cmdFocus() {},
 	cmdHelp() {},
 	cmdExit() {},
+	cmdInvalid() {},
 	isValidPackageName: () => true,
 };
 

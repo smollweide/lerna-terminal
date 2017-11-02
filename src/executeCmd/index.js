@@ -10,6 +10,7 @@ const cmdFocus = require('../cmdFocus');
 const cmdHelp = require('../cmdHelp');
 const cmdExit = require('../cmdExit');
 const cmdNative = require('../cmdExit');
+const cmdInvalid = require('../cmdInvalid');
 const isValidPackageName = require('../isValidPackageName');
 
 const COMMANDS = {
@@ -42,6 +43,7 @@ function executeCmd(
 		_cmdFocus,
 		_cmdHelp,
 		_cmdExit,
+		_cmdInvalid,
 		_isValidPackageName,
 	}
 ) {
@@ -100,6 +102,7 @@ function executeCmd(
 	}
 
 	// invalid command will be ignored
+	_cmdInvalid(_render, cmd);
 }
 
 module.exports = resolve(executeCmd, {
@@ -112,6 +115,7 @@ module.exports = resolve(executeCmd, {
 	cmdFocus,
 	cmdHelp,
 	cmdExit,
+	cmdInvalid,
 	isValidPackageName,
 });
 module.exports.executeCmd = executeCmd;

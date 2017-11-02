@@ -2,7 +2,9 @@
 const { program } = require('../commander');
 
 const state = {};
-const uiState = {};
+const uiState = {
+	notifications: [],
+};
 
 /**
  * @description prepares the initial store

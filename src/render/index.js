@@ -6,12 +6,20 @@ const { uiState } = require('../store');
 const renderAllPanels = require('../renderAllPanels');
 const renderFocus = require('../renderFocus');
 const renderHelp = require('../renderHelp');
+const renderNotification = require('../renderNotification');
+
+let _render;
 
 /**
  * @param {Object} di - dependency injection
  * @returns {void}
 **/
-function render({ _uiState, _renderAllPanels, _renderHelp, _renderFocus }) {
+function render({ _uiState, _renderAllPanels, _renderHelp, _renderFocus, _renderNotification }) {
+	if (_uiState.notifications.length > 0) {
+		_renderNotification(_render);
+		return;
+	}
+
 	if (_uiState.focus === 'all' || !_uiState.focus) {
 		_renderAllPanels();
 		return;
@@ -24,5 +32,7 @@ function render({ _uiState, _renderAllPanels, _renderHelp, _renderFocus }) {
 	_renderFocus();
 }
 
-module.exports = resolve(render, { uiState, renderAllPanels, renderHelp, renderFocus });
+_render = resolve(render, { uiState, renderAllPanels, renderHelp, renderFocus, renderNotification });
+
+module.exports = _render;
 module.exports.render = render;

@@ -217,6 +217,32 @@ function getText(text, type) {
 	return getThemeSymbol(type)(text);
 }
 
+/**
+ * @param {string} title - the title which will be displayed in start line
+ * @param {Array<string>} lines - the content array
+ * @param {number} width - the line width
+ * @returns {string} - returns an box arrount the given lines
+**/
+function getBox(title, lines, width) {
+	const out = [];
+	out.push(getStartLine(title, width));
+	out.push(getEmptyLine(width));
+	lines.forEach(line => {
+		out.push(
+			getLine({
+				filled: '',
+				start: getThemeSymbol('content'),
+				content: line,
+				end: getThemeSymbol('content'),
+				width,
+			})
+		);
+	});
+	out.push(getEmptyLine(width));
+	out.push(getEndLine(width));
+	return out.join('');
+}
+
 module.exports = {
 	getTerminal,
 	getTerminalPanel,
@@ -224,4 +250,5 @@ module.exports = {
 	getStartLine,
 	getEndLine,
 	getText,
+	getBox,
 };

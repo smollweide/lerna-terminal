@@ -1,5 +1,5 @@
 const resolve = require('../resolve');
-const renderClear = require('./index');
+const { renderClear } = require('./index');
 
 describe('renderClear', () => {
 	it('default', done => {

@@ -1,6 +1,6 @@
 // const dcopy = require('deep-copy');
 const fs = require('fs');
-const { getTerminalPanel, getLine, getTerminal, getText } = require('./index');
+const { getTerminalPanel, getLine, getTerminal, getText, getBox } = require('./index');
 
 describe('getTerminalPanel', () => {
 	describe('getTerminalPanel', () => {
@@ -90,6 +90,16 @@ describe('getTerminalPanel', () => {
 			// fs.writeFileSync('./src/getTerminalPanel/__snapshots__/get-terminal-1.json', terminalPanel);
 			const expected = fs.readFileSync('./src/getTerminalPanel/__snapshots__/get-terminal-1.json', 'utf8');
 			expect(terminalPanel).toEqual(expected);
+		});
+	});
+	describe('getBox', () => {
+		it('default', () => {
+			const box = JSON.stringify({
+				box: getBox('test', ['msg'], 30),
+			});
+			// fs.writeFileSync('./src/getTerminalPanel/__snapshots__/get-box-1.json', box);
+			const expected = fs.readFileSync('./src/getTerminalPanel/__snapshots__/get-box-1.json', 'utf8');
+			expect(box).toEqual(expected);
 		});
 	});
 	describe('getText', () => {
