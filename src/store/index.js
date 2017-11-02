@@ -4,6 +4,7 @@ const { program } = require('../commander');
 const state = {};
 const uiState = {
 	notifications: [],
+	help: false,
 };
 
 /**

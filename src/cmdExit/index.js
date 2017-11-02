@@ -10,7 +10,11 @@ const { uiState } = require('../store');
  * @returns {void}
 **/
 function cmdExit(packageName, render, { _uiState }) {
-	_uiState.focus = '';
+	if (_uiState.help) {
+		_uiState.help = false;
+	} else {
+		_uiState.focus = '';
+	}
 	render();
 }
 

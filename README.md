@@ -28,7 +28,7 @@ $ lerna-terminal --help
     $ lerna-terminal -s start -t minimal -i utils
 ```
 
-## Cli
+## CLI
 
 ```
 lerna-terminal~$ help
@@ -38,7 +38,7 @@ lerna-terminal~$ help
 
   Commands
     [string]          Focus one terminal panel and update current pwd
-    focus             Leave focused mode and displays all terminal panels
+    focus             Leave focused mode (child process) and displays all terminal panels
     focus [string]    Focus one terminal panel and update current pwd
     clear             Clear all terminal panels
     clear [string]    Clear one terminal panel
@@ -46,7 +46,26 @@ lerna-terminal~$ help
     start [string]    Start (or restart) the npm script (see Usage) in one terminal panels
     stop              Stops the npm script (see Usage) in all terminal panels
     stop [string]     Stops the npm script (see Usage) in one terminal panels
-    exit              Leave current mode and displays all terminal panels
+    exit              Leave current child process and displays all terminal panels
+
+  Example
+    lerna-terminal~$ start
+```
+
+## CLI in child process (focused)
+
+```
+lerna-terminal/<packageName>~$ help
+
+  Usage
+    lerna-terminal/<packageName>~$ [command]
+
+  Commands
+    [string]          On Enter the given string will be executed in child process
+    clear             Clear focused terminal panel
+    start             Start (or restart) the npm script (see Usage) in focused terminal panel
+    stop              Stops the npm script (see Usage) in focused terminal panel
+    exit              Leave current child process and displays all terminal panels
 
   Example
     lerna-terminal~$ start

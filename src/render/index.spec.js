@@ -8,6 +8,7 @@ describe('render', () => {
 			renderAllPanels: done,
 			renderHelp() {},
 			renderFocus() {},
+			renderHelpFocus() {},
 		})();
 	});
 	it('render notification', done => {
@@ -25,6 +26,7 @@ describe('render', () => {
 			renderAllPanels() {},
 			renderHelp() {},
 			renderFocus() {},
+			renderHelpFocus() {},
 			renderNotification: () => {
 				done();
 			},
@@ -36,14 +38,25 @@ describe('render', () => {
 			renderAllPanels: done,
 			renderHelp() {},
 			renderFocus() {},
+			renderHelpFocus() {},
+		})();
+	});
+	it('help', done => {
+		resolve(render, {
+			uiState: { focus: 'all', notifications: [], help: true },
+			renderAllPanels() {},
+			renderHelp: done,
+			renderFocus() {},
+			renderHelpFocus() {},
 		})();
 	});
 	it('focus help', done => {
 		resolve(render, {
-			uiState: { focus: 'help', notifications: [] },
+			uiState: { focus: 'test', notifications: [], help: true },
 			renderAllPanels() {},
-			renderHelp: done,
+			renderHelp() {},
 			renderFocus() {},
+			renderHelpFocus: done,
 		})();
 	});
 	it('focus', done => {
@@ -52,6 +65,7 @@ describe('render', () => {
 			renderAllPanels() {},
 			renderHelp() {},
 			renderFocus: done,
+			renderHelpFocus() {},
 		})();
 	});
 });

@@ -10,7 +10,7 @@ const { uiState } = require('../store');
  * @returns {void}
 **/
 function cmdHelp(packageName, render, { _uiState }) {
-	_uiState.focus = 'help';
+	_uiState.help = true;
 	render();
 }
 

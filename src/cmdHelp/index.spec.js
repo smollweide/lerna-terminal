@@ -10,10 +10,10 @@ describe('cmdHelp', () => {
 		const _cmdHelp = resolve(cmdHelp, { uiState });
 		expect(_cmdHelp('', done)).toBe(undefined);
 	});
-	it('focus help', done => {
+	it('set help flag', done => {
 		const _uiState = Object.assign({}, uiState);
 		const _cmdHelp = resolve(cmdHelp, { uiState: _uiState });
 		_cmdHelp('', done);
-		expect(_uiState.focus).toBe('help');
+		expect(_uiState.help).toBe(true);
 	});
 });
