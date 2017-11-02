@@ -23,6 +23,8 @@ function runNpmScript(
 	const run = cmd => {
 		const cmdArr = cmd.split(' ');
 
+		const childProcessObj = { isRunning: true };
+
 		const childProcess = _spawn(cmdArr[0], cmdArr.slice(1, cmdArr.length), {
 			shell: true,
 			cwd: packagePath,
@@ -34,10 +36,14 @@ function runNpmScript(
 		childProcess.stderr.on('data', data => {
 			onError(data.toString().replace(/\n$/, ''));
 		});
-		childProcess.on('exit', onExit);
+		childProcess.on('exit', () => {
+			childProcessObj.isRunning = false;
+			onExit();
+		});
 
-		return {
+		return Object.assign(childProcessObj, {
 			stop() {
+				childProcessObj.isRunning = false;
 				childProcess.kill('SIGINT');
 			},
 			start() {
@@ -48,7 +54,7 @@ function runNpmScript(
 				this.stop();
 				return run(newCmd);
 			},
-		};
+		});
 	};
 
 	return run(`npm run ${scriptName}`);

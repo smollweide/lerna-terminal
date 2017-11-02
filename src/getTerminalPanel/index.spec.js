@@ -6,7 +6,12 @@ describe('getTerminalPanel', () => {
 	describe('getTerminalPanel', () => {
 		it('default', () => {
 			const terminalPanel = JSON.stringify({
-				terminalPanel: getTerminalPanel(30, 10, 'title', ['npm run start', 'server started']),
+				terminalPanel: getTerminalPanel({
+					width: 30,
+					height: 10,
+					title: 'title',
+					lines: ['npm run start', 'server started'],
+				}),
 			});
 			// fs.writeFileSync('./src/getTerminalPanel/__snapshots__/get-terminal-panel-1.json', terminalPanel);
 			const expected = fs.readFileSync('./src/getTerminalPanel/__snapshots__/get-terminal-panel-1.json', 'utf8');
@@ -14,7 +19,12 @@ describe('getTerminalPanel', () => {
 		});
 		it('more lines then available', () => {
 			const terminalPanel = JSON.stringify({
-				terminalPanel: getTerminalPanel(30, 5, 'title', ['npm run start', 'server started', 'a', 'b', 'c']),
+				terminalPanel: getTerminalPanel({
+					width: 30,
+					height: 5,
+					title: 'title',
+					lines: ['npm run start', 'server started', 'a', 'b', 'c'],
+				}),
 			});
 			// fs.writeFileSync('./src/getTerminalPanel/__snapshots__/get-terminal-panel-2.json', terminalPanel);
 			const expected = fs.readFileSync('./src/getTerminalPanel/__snapshots__/get-terminal-panel-2.json', 'utf8');

@@ -5,9 +5,6 @@
 // TODOS
 // - terminal title
 // - don't ignore main script
-// - execute command on childProcess
-//   -> lerna-terminal~$ cmd utils p (jest)
-//   -> focused lerna-terminal~$ p (jest)
 // - generic usage
 
 const { runCommander } = require('./commander');

@@ -12,6 +12,7 @@ const { program } = require('../commander');
 const themeSymbolMap = {
 	test: {
 		title: text => text,
+		titleStopped: text => text,
 		msg: text => text,
 		error: text => text,
 		titleSpace: ' ',
@@ -25,6 +26,7 @@ const themeSymbolMap = {
 	},
 	default: {
 		title: text => chalk.blue.bgWhite.bold(text),
+		titleStopped: text => chalk.red.bgWhite.bold(text),
 		msg: text => text,
 		error: text => chalk.red(text),
 		titleSpace: chalk.bgWhite(' '),
@@ -38,6 +40,7 @@ const themeSymbolMap = {
 	},
 	massive: {
 		title: text => chalk.blue.bgWhite.bold(text),
+		titleStopped: text => chalk.red.bgWhite.bold(text),
 		msg: text => text,
 		error: text => chalk.red(text),
 		titleSpace: chalk.bgWhite(' '),
@@ -51,6 +54,7 @@ const themeSymbolMap = {
 	},
 	minimal: {
 		title: text => chalk.blue.bgWhite.bold(text),
+		titleStopped: text => chalk.red.bgWhite.bold(text),
 		msg: text => text,
 		error: text => chalk.red(text),
 		titleSpace: chalk.bgWhite(' '),
@@ -114,10 +118,11 @@ function getLine({ filled, start, content, end, width }) {
 /**
  * @param {string} title - the title which will be displayed in start line
  * @param {number} width - the line width
+ * @param {boolean} isRunning - flag for the child process is running or not
  * @returns {string} - returns an start line
 **/
-function getStartLine(title, width) {
-	title = getThemeSymbol('title')(title);
+function getStartLine(title, width, isRunning) {
+	title = isRunning ? getThemeSymbol('title')(title) : getThemeSymbol('titleStopped')(title);
 	const separator = getThemeSymbol('separatorTop');
 	const titleSpace = getThemeSymbol('titleSpace');
 	const topLeft = getThemeSymbol('topLeft');
@@ -158,9 +163,10 @@ function getEndLine(width) {
  * @param {number} height - the panel height
  * @param {string} title - the title which will be displayed in start line
  * @param {Array<string>} lines - array with the content of the panel
+ * @param {boolean} isRunning - flag for is running or not
  * @returns {string} - returns an bordered panel
 **/
-function getTerminalPanel(width, height, title, lines) {
+function getTerminalPanel({ width, height, title, lines, isRunning = false }) {
 	width = parseInt(width, 10);
 	const out = [];
 	const rLines = lines.concat([]);
@@ -173,7 +179,7 @@ function getTerminalPanel(width, height, title, lines) {
 		shortenLines = rLines.concat([]);
 	}
 
-	out.push(getStartLine(title, width));
+	out.push(getStartLine(title, width, isRunning));
 	out.push(getEmptyLine(width));
 	while (availableLines > 0) {
 		if (shortenLines[renderedLines]) {

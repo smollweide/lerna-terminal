@@ -33,12 +33,13 @@ function renderAllPanels({ _state, _log, _renderClear, _renderCmdPrefix, _dimens
 		if (!currentState[packageName].log) {
 			return;
 		}
-		renderArr[counterRow][counterColumn] = getTerminalPanel(
-			panelWidth,
-			panelHeight,
-			packageName,
-			currentState[packageName].log
-		);
+		renderArr[counterRow][counterColumn] = getTerminalPanel({
+			width: panelWidth,
+			height: panelHeight,
+			title: packageName,
+			lines: currentState[packageName].log,
+			isRunning: currentState[packageName].terminal.isRunning,
+		});
 		counterColumn += 1;
 		if (counterColumn >= boardColumns) {
 			counterColumn = 0;

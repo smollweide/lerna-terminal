@@ -4,15 +4,27 @@ const { renderAllPanels } = require('./index');
 const state = {
 	utils: {
 		log: ['started'],
+		terminal: {
+			isRunning: true,
+		},
 	},
 	ui: {
 		log: ['row'],
+		terminal: {
+			isRunning: true,
+		},
 	},
 	ui2: {
 		log: ['row'],
+		terminal: {
+			isRunning: true,
+		},
 	},
 	ui3: {
 		log: ['row'],
+		terminal: {
+			isRunning: true,
+		},
 	},
 	dateTime: {},
 };
