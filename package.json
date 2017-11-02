@@ -94,7 +94,7 @@
   "scripts": {
     "commit": "git-cz",
     "precommit": "lint-staged && npm-run-all lint test check-coverage",
-    "prebuild": "rimraf build",
+    "prebuild": "rimraf dist",
     "build": "node_modules/.bin/babel --out-dir dist --ignore *.spec.js src",
     "prepack": "rimraf lerna-terminal-0.0.0-semantically-released.tgz package",
     "pack": "npm pack && open lerna-terminal-0.0.0-semantically-released.tgz",
