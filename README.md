@@ -14,7 +14,7 @@ $ npm install lerna-terminal
 $ lerna-terminal --help
 
   Usage
-    $ lerna-terminal [options]
+    $ lerna-terminal <scriptName> [options]
 
   Options
     -V, --version                   output the version number
@@ -25,7 +25,7 @@ $ lerna-terminal --help
     -h, --help                      output usage information
 
   Example
-    $ lerna-terminal -s start -t minimal -i utils
+    $ lerna-terminal start -t minimal -i utils
 ```
 
 ## CLI

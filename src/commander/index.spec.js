@@ -3,6 +3,13 @@ const resolve = require('../resolve');
 const { _runCommander } = require('./index');
 
 const program = {
+	arguments() {
+		return this;
+	},
+	action(cb) {
+		cb('test');
+		return this;
+	},
 	version() {
 		return this;
 	},
@@ -13,21 +20,14 @@ const program = {
 	script: 'test',
 };
 
+const packageData = {
+	version: '1.0.0',
+};
+
 describe('commander', () => {
 	it('execute without error', () => {
 		const _program = dcopy(program);
-		resolve(_runCommander, { program: _program, process: { argv: ['/', '/', '-s', 'start'] } })();
+		resolve(_runCommander, { program: _program, process: { argv: ['/', '/', 'start'] }, packageData })();
 		expect(_program.script).toBe('test');
-	});
-	it('script is missing -> throw error', () => {
-		const _program = dcopy(program);
-		_program.script = undefined;
-		const __runCommander = resolve(_runCommander, {
-			program: _program,
-			process: { argv: ['/', '/', '-s', 'start'] },
-		});
-		expect(() => {
-			__runCommander();
-		}).toThrow();
 	});
 });
