@@ -9,7 +9,7 @@ const cmdClear = require('../cmdClear');
 const cmdFocus = require('../cmdFocus');
 const cmdHelp = require('../cmdHelp');
 const cmdExit = require('../cmdExit');
-const cmdNative = require('../cmdExit');
+const cmdNative = require('../cmdNative');
 const cmdInvalid = require('../cmdInvalid');
 const isValidPackageName = require('../isValidPackageName');
 
@@ -77,7 +77,7 @@ function executeCmd(
 	if (focusedPackageName) {
 		// run native cmd on child_process for example 'npm run test' in case of a child_process is focused
 		if (!_isValidCmd) {
-			_cmdNative(focusedPackageName, _render);
+			_cmdNative(cmd, focusedPackageName, _render);
 			return;
 		}
 

@@ -120,4 +120,14 @@ describe('runNpmScript', () => {
 		});
 		expect(typeof _runNpmScript(_options).start()).toBe('object');
 	});
+	it('execute() -> return run()', () => {
+		const _options = Object.assign({}, options);
+		const _spawnReturn = Object.assign({}, spawnReturn);
+		const _runNpmScript = resolve(runNpmScript, {
+			spawn() {
+				return _spawnReturn;
+			},
+		});
+		expect(typeof _runNpmScript(_options).execute('npm run test')).toBe('object');
+	});
 });

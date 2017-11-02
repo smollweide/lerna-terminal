@@ -20,32 +20,38 @@ function runNpmScript(
 	{ scriptName, packagePath, onExit = () => {}, onRecieve = () => {}, onError = () => {} },
 	{ _spawn }
 ) {
-	const run = () => {
-		const cmd = _spawn('npm', ['run', scriptName], {
+	const run = cmd => {
+		const cmdArr = cmd.split(' ');
+
+		const childProcess = _spawn(cmdArr[0], cmdArr.slice(1, cmdArr.length), {
 			shell: true,
 			cwd: packagePath,
 		});
 
-		cmd.stdout.on('data', data => {
+		childProcess.stdout.on('data', data => {
 			onRecieve(data.toString().replace(/\n$/, ''));
 		});
-		cmd.stderr.on('data', data => {
+		childProcess.stderr.on('data', data => {
 			onError(data.toString().replace(/\n$/, ''));
 		});
-		cmd.on('exit', onExit);
+		childProcess.on('exit', onExit);
 
 		return {
 			stop() {
-				cmd.kill('SIGINT');
+				childProcess.kill('SIGINT');
 			},
 			start() {
 				this.stop();
-				return run();
+				return run(`npm run ${scriptName}`);
+			},
+			execute(newCmd) {
+				this.stop();
+				return run(newCmd);
 			},
 		};
 	};
 
-	return run();
+	return run(`npm run ${scriptName}`);
 }
 
 module.exports = resolve(runNpmScript, { spawn });
