@@ -17,6 +17,7 @@ function runCommander({ _program, _process, _packageData }) {
 		.option('-i, --ignoredPackages [string]', 'Add packages which should be ignored')
 		.option('-f, --focus [string]', 'Focus one subterminal initially')
 		.option('-t, --theme [string]', 'Define theme (default, minimal, massive)')
+		.option('-r, --root', 'Run given scriptName also in root package')
 		.parse(_process.argv);
 
 	/* istanbul ignore next */

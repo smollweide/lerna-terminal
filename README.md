@@ -19,10 +19,11 @@ $ lerna-terminal --help
     $ lerna-terminal <scriptName> [options]
 
   Options
-    -V, --version                   output the version number
+    -V, --version                   Output the version number
     -i, --ignoredPackages [string]  Add packages which should be ignored
     -f, --focus [string]            Focus one subterminal initially
     -t, --theme [string]            Define theme (default, minimal, massive)
+    -r, --root                      Run given scriptName also in root package
     -h, --help                      output usage information
 
   Example
