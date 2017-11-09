@@ -10,18 +10,38 @@ const mergePanelsRow = require('../mergePanelsRow');
 const { dimensions } = require('../getDimensions');
 
 /**
+ * @param {number} amountOfProcesses - amount of processes
+ * @returns {void}
+**/
+function getColumnsAndRows(amountOfProcesses) {
+	let columns = Math.ceil(amountOfProcesses / 2);
+
+	if (amountOfProcesses === 2) {
+		columns = 2;
+	} else if (amountOfProcesses === 9) {
+		columns = 3;
+	} else if (amountOfProcesses >= 10) {
+		columns = 4;
+	}
+
+	return {
+		columns,
+		rows: Math.ceil(amountOfProcesses / columns),
+	};
+}
+
+/**
  * @param {Object} di - dependency injection
  * @returns {void}
 **/
 function renderAllPanels({ _state, _log, _renderClear, _renderCmdPrefix, _dimensions }) {
 	const currentState = Object.assign({}, _state);
 	const stateKeys = Object.keys(currentState);
-	const boardColumns = 3;
-	const panelWidth = parseInt(_dimensions.width / boardColumns, 10);
-	const boardRows = Math.ceil(stateKeys.length / boardColumns);
-	const panelHeight = parseInt(_dimensions.height / boardRows, 10) - 1;
-	const renderArrInner = getFilledArray(boardColumns, '');
-	const renderArr = getFilledArray(boardRows, renderArrInner);
+	const { columns, rows } = getColumnsAndRows(stateKeys.length);
+	const panelWidth = parseInt(_dimensions.width / columns, 10);
+	const panelHeight = parseInt(_dimensions.height / rows, 10) - 1;
+	const renderArrInner = getFilledArray(columns, '');
+	const renderArr = getFilledArray(rows, renderArrInner);
 
 	_renderClear();
 
@@ -41,7 +61,7 @@ function renderAllPanels({ _state, _log, _renderClear, _renderCmdPrefix, _dimens
 			isRunning: currentState[packageName].terminal.isRunning,
 		});
 		counterColumn += 1;
-		if (counterColumn >= boardColumns) {
+		if (counterColumn >= columns) {
 			counterColumn = 0;
 			counterRow += 1;
 		}
@@ -55,3 +75,4 @@ function renderAllPanels({ _state, _log, _renderClear, _renderCmdPrefix, _dimens
 
 module.exports = resolve(renderAllPanels, { state, log: console.log, renderClear, renderCmdPrefix, dimensions });
 module.exports.renderAllPanels = renderAllPanels;
+module.exports.getColumnsAndRows = getColumnsAndRows;
