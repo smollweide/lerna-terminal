@@ -1,5 +1,6 @@
 /* eslint no-console: 0*/
 /* eslint complexity: 0*/
+/* eslint no-empty: 0*/
 'use strict';
 const { spawn } = require('child_process');
 const resolve = require('../resolve');
@@ -18,7 +19,7 @@ const resolve = require('../resolve');
 **/
 function runNpmScript(
 	{ scriptName, packagePath, onExit = () => {}, onRecieve = () => {}, onError = () => {} },
-	{ _spawn }
+	{ _spawn, _process }
 ) {
 	const run = cmd => {
 		const cmdArr = cmd.split(' ');
@@ -28,6 +29,7 @@ function runNpmScript(
 		const childProcess = _spawn(cmdArr[0], cmdArr.slice(1, cmdArr.length), {
 			shell: true,
 			cwd: packagePath,
+			detached: true,
 		});
 
 		childProcess.stdout.on('data', data => {
@@ -44,7 +46,9 @@ function runNpmScript(
 		return Object.assign(childProcessObj, {
 			stop() {
 				childProcessObj.isRunning = false;
-				childProcess.kill('SIGINT');
+				try {
+					_process.kill(-childProcess.pid);
+				} catch (err) {}
 			},
 			start() {
 				this.stop();
@@ -60,4 +64,4 @@ function runNpmScript(
 	return run(`npm run ${scriptName}`);
 }
 
-module.exports = resolve(runNpmScript, { spawn });
+module.exports = resolve(runNpmScript, { spawn, process });

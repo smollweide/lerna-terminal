@@ -99,13 +99,14 @@ describe('runNpmScript', () => {
 	it('stop() -> kill', done => {
 		const _options = Object.assign({}, options);
 		const _spawnReturn = Object.assign({}, spawnReturn);
-		_spawnReturn.kill = type => {
-			expect(type).toBe('SIGINT');
-			done();
-		};
 		const _runNpmScript = resolve(runNpmScript, {
 			spawn() {
 				return _spawnReturn;
+			},
+			process: {
+				kill() {
+					done();
+				},
 			},
 		});
 		_runNpmScript(_options).stop();
