@@ -84,6 +84,7 @@
     "cross-env": "5.1.0",
     "cz-conventional-changelog": "2.0.0",
     "deep-copy": "1.4.0",
+    "eslint": "4.15.0",
     "husky": "0.14.3",
     "istanbul": "0.4.5",
     "jest": "21.2.1",
@@ -96,10 +97,11 @@
   "dependencies": {
     "chalk": "2.2.0",
     "commander": "2.11.0",
+    "glob": "7.1.2",
     "string-length": "2.0.0"
   },
   "scripts": {
-    "c": "git-cz",
+    "c": "git add . && git-cz",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "precommit": "lint-staged && npm-run-all lint test check-coverage",
     "prebuild": "rimraf dist",
