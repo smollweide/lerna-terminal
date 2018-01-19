@@ -58,6 +58,11 @@
       "!src/resolve/resolve-dependency.js"
     ]
   },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
@@ -69,6 +74,8 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "6.0.2",
+    "@commitlint/config-conventional": "6.0.2",
     "@namics/eslint-config": "4.1.0",
     "babel-cli": "6.26.0",
     "babel-preset-env": "1.6.1",
@@ -93,6 +100,7 @@
   },
   "scripts": {
     "commit": "git-cz",
+    "commitmsg": "commitlint -e $GIT_PARAMS",
     "precommit": "lint-staged && npm-run-all lint test check-coverage",
     "prebuild": "rimraf dist",
     "build": "node_modules/.bin/babel --out-dir dist --ignore *.spec.js src",
