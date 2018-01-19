@@ -99,7 +99,7 @@
     "string-length": "2.0.0"
   },
   "scripts": {
-    "commit": "git-cz",
+    "c": "git-cz",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "precommit": "lint-staged && npm-run-all lint test check-coverage",
     "prebuild": "rimraf dist",
