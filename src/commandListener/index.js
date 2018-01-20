@@ -5,7 +5,7 @@ const resolve = require('../resolve');
  * @param {Function<string>} onCommandEntered - the callback function
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function commandListener(onCommandEntered, { _process }) {
 	_process.stdin.setEncoding('utf8');
 	_process.stdin.on('readable', () => {

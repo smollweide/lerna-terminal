@@ -8,7 +8,7 @@ const renderClear = require('../renderClear');
 /**
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function renderHelp({ _renderClear, _renderCmdPrefix, _log }) {
 	_renderClear();
 	_log('');

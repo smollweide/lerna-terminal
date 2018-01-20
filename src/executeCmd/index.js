@@ -30,7 +30,7 @@ const isValidCmd = cmd => {
  * @param {string} cmd - the user entered command
  * @param {Object} di - dependencies
  * @returns {boolean} returns true if packageName is a part of packagePath
-**/
+ **/
 function executeCmd(
 	cmd,
 	{

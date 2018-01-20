@@ -8,7 +8,7 @@ const cmdPrefix = cmd => `lerna-terminal${cmd ? `/${cmd}` : ''}~$ `;
  * @description provides an string in terminal with cursor afterwards
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function renderCmdPrefix({ _uiState, _write }) {
 	if (typeof _uiState.focus === 'string' && _uiState.focus !== '' && _uiState.focus !== 'all') {
 		/* istanbul ignore next */

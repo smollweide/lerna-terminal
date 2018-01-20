@@ -6,7 +6,7 @@ const { uiState } = require('../store');
 /**
  * @param {Object} di - dependency injection
  * @returns {boolean} returns focused packageName
-**/
+ **/
 function getFocused({ _uiState, _isValidPackageName }) {
 	if (!_uiState.focus || _uiState.focus === 'all' || _uiState.focus === '') {
 		return undefined;

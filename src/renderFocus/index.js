@@ -11,7 +11,7 @@ const renderAllPanels = require('../renderAllPanels');
 /**
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function renderFocus({ _state, _uiState, _dimensions, _log, _renderClear, _renderCmdPrefix, _renderAllPanels }) {
 	const panelWidth = parseInt(_dimensions.width, 10);
 	const panelHeight = parseInt(_dimensions.height, 10) - 1;

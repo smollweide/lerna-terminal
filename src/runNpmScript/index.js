@@ -16,7 +16,7 @@ const resolve = require('../resolve');
  * @param {Function} options.onError - callback which will be fired if childProcess recieved an error message
  * @param {Object} di - dependency injection
  * @returns {Object} returns an object including an start and stop method
-**/
+ **/
 function runNpmScript(
 	{ scriptName, packagePath, onExit = () => {}, onRecieve = () => {}, onError = () => {} },
 	{ _spawn, _process }

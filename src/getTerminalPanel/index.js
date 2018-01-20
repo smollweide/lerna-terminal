@@ -71,7 +71,7 @@ const themeSymbolMap = {
 /**
  * @param {string} type - the symbol type eg. content,topLeft,...
  * @returns {Object} returns the package.json data object
-**/
+ **/
 function getThemeSymbol(type) {
 	/* istanbul ignore next */
 	if (process.env.NODE_ENV === 'test') {
@@ -88,7 +88,7 @@ function getThemeSymbol(type) {
  * @param {string} end - the last part of the line
  * @param {number} width - the line width
  * @returns {string} - returns an line
-**/
+ **/
 function getLine({ filled, start, content, end, width }) {
 	if (filled !== '') {
 		return getFilledArray(width, filled).join('');
@@ -120,7 +120,7 @@ function getLine({ filled, start, content, end, width }) {
  * @param {number} width - the line width
  * @param {boolean} isRunning - flag for the child process is running or not
  * @returns {string} - returns an start line
-**/
+ **/
 function getStartLine(title, width, isRunning) {
 	title = isRunning ? getThemeSymbol('title')(title) : getThemeSymbol('titleStopped')(title);
 	const separator = getThemeSymbol('separatorTop');
@@ -136,7 +136,7 @@ function getStartLine(title, width, isRunning) {
 /**
  * @param {number} width - the line width
  * @returns {string} - returns an empty line
-**/
+ **/
 function getEmptyLine(width) {
 	return getLine({
 		filled: '',
@@ -150,7 +150,7 @@ function getEmptyLine(width) {
 /**
  * @param {number} width - the line width
  * @returns {string} - returns an end line
-**/
+ **/
 function getEndLine(width) {
 	const line = getFilledArray(width, getThemeSymbol('separatorBottom'));
 	line[0] = getThemeSymbol('bottomLeft');
@@ -165,7 +165,7 @@ function getEndLine(width) {
  * @param {Array<string>} lines - array with the content of the panel
  * @param {boolean} isRunning - flag for is running or not
  * @returns {string} - returns an bordered panel
-**/
+ **/
 function getTerminalPanel({ width, height, title, lines, isRunning = false }) {
 	width = parseInt(width, 10);
 	const out = [];
@@ -209,7 +209,7 @@ function getTerminalPanel({ width, height, title, lines, isRunning = false }) {
  * @param {string} title - the title which will be displayed in start line
  * @param {Array<string>} lines - array with the content of the panel
  * @returns {string} - returns an bordered panel
-**/
+ **/
 function getTerminal(width, height, title, lines) {
 	return lines.map(line => `${line}\n`);
 }
@@ -218,7 +218,7 @@ function getTerminal(width, height, title, lines) {
  * @param {string} text - the text
  * @param {string} type - the text type eg. error or msg
  * @returns {string} - returns an colored text
-**/
+ **/
 function getText(text, type) {
 	return getThemeSymbol(type)(text);
 }
@@ -228,7 +228,7 @@ function getText(text, type) {
  * @param {Array<string>} lines - the content array
  * @param {number} width - the line width
  * @returns {string} - returns an box arrount the given lines
-**/
+ **/
 function getBox(title, lines, width) {
 	const out = [];
 	out.push(getStartLine(title, width));

@@ -12,7 +12,7 @@ const { dimensions } = require('../getDimensions');
  * @param {Function} render - the render function
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function renderNotification(render, { _log, _renderClear, _uiState, _dimensions, _getBox }) {
 	_renderClear();
 	const { type = 'info', message, delay = 2000 } = _uiState.notifications[0];

@@ -13,7 +13,7 @@ const isValidStopFunction = (_state, packageName) => {
  * @param {Function} render - the callback which should be a render function
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function cmdStop(packageName, render, { _state, _uiState }) {
 	// if stop <packageName> try to stop script
 	if (packageName) {

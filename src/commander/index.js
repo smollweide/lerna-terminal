@@ -6,7 +6,7 @@ const packageData = require('../../package.json');
 /**
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function runCommander({ _program, _process, _packageData }) {
 	_program
 		.version(_packageData.version)

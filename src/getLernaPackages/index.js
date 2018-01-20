@@ -10,7 +10,7 @@ const getLerna = require('../getLerna');
  * @param {Function} onMatch - the callback
  * @param {Object} di - dependency injection
  * @returns {Array<string>} returns an array of pathes to the packages
-**/
+ **/
 function getLernaPackages(onMatch, { _fs, _glob, _path, _getLerna, _process }) {
 	const appDirectory = _fs.realpathSync(_process.cwd());
 	const lerna = _getLerna();

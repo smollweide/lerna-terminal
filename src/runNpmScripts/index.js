@@ -15,7 +15,7 @@ const render = require('../render');
 /**
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function runNpmScripts({
 	_getScriptCommands,
 	_program,

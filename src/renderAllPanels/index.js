@@ -12,7 +12,7 @@ const { dimensions } = require('../getDimensions');
 /**
  * @param {number} amountOfProcesses - amount of processes
  * @returns {void}
-**/
+ **/
 function getColumnsAndRows(amountOfProcesses) {
 	let columns = Math.ceil(amountOfProcesses / 2);
 
@@ -33,7 +33,7 @@ function getColumnsAndRows(amountOfProcesses) {
 /**
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function renderAllPanels({ _state, _log, _renderClear, _renderCmdPrefix, _dimensions }) {
 	const currentState = Object.assign({}, _state);
 	const stateKeys = Object.keys(currentState);

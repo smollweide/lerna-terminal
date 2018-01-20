@@ -32,7 +32,7 @@ const notifications = {
  * @param {Function} render - the callback which should be a render function
  * @param {Object} ui - dependency injection
  * @returns {void}
-**/
+ **/
 function cmdNative(cmd, packageName, render, { _state, _uiState }) {
 	if (typeof cmd !== 'string' || cmd === '') {
 		_uiState.notifications.push(notifications.invalidCmd());

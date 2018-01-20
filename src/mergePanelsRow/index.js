@@ -5,7 +5,7 @@
  * @param {Array<Array<string>>} panels - the panel array
  * @param {number} linesCount - number of lines for this row
  * @returns {Array} returns the merged lines
-**/
+ **/
 function mergePanelsRow(panels, linesCount) {
 	const lines = [];
 	let i = 0;

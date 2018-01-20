@@ -8,7 +8,7 @@ const { uiState } = require('../store');
  * @param {string} cmd - the entered invalid command
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function cmdInvalid(render, cmd, { _uiState }) {
 	_uiState.notifications.push({
 		type: 'error',

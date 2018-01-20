@@ -14,7 +14,7 @@ const isValidStartFunction = (_state, packageName) => {
  * @param {Function} render - the callback which should be a render function
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function cmdStart(packageName, render, { _state, _uiState, _cmdClear }) {
 	// if start <packageName> try to start script
 	if (packageName) {

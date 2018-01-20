@@ -8,7 +8,7 @@ const fs = require('fs');
 /**
  * @param {Object|undefined} di - dependency injection for tests
  * @returns {Object} returns an object of available scripts as key and their packages as array
-**/
+ **/
 function getScriptCommands({ _getLernaPackages, _getPackage, _program, _fs, _process }) {
 	const commands = {};
 	const appDirectory = _fs.realpathSync(_process.cwd());

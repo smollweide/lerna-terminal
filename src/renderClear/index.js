@@ -6,7 +6,7 @@ const resolve = require('../resolve');
  * @description clears the terminal
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function renderClear({ _log }) {
 	// clear console
 	_log('\x1Bc');

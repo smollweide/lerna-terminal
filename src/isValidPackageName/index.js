@@ -6,7 +6,7 @@ const { state } = require('../store');
  * @param {string} packageName - the name of the package
  * @param {Object} di - dependency injection
  * @returns {boolean} returns true if packageName is valid
-**/
+ **/
 function isValidPackageName(packageName, { _state }) {
 	return Boolean(
 		_state[packageName] &&

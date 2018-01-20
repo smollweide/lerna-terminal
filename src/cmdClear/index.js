@@ -8,7 +8,7 @@ const { state } = require('../store');
  * @param {Function} render - the callback which should be a render function
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function cmdClear(packageName, render, { _state }) {
 	if (packageName && _state[packageName] && _state[packageName].log) {
 		_state[packageName].log = [];

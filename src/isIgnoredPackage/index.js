@@ -5,7 +5,7 @@ const path = require('path');
  * @param {string} packagePath - the path to the package
  * @param {string} ignoredPackages - a comma separated list of package names
  * @returns {boolean} returns true if packageName is a part of packagePath
-**/
+ **/
 function isIgnoredPackage(packagePath, ignoredPackages) {
 	if (typeof ignoredPackages !== 'string' || ignoredPackages === '') {
 		return false;

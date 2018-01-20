@@ -10,7 +10,7 @@ const dimensions = {
  * @param {Function<string>} onResize - the callback function
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function resizeListener(onResize, { _dimensions, _process }) {
 	const check = () => {
 		if (_dimensions.width !== _process.stdout.columns || _dimensions.height !== _process.stdout.rows) {

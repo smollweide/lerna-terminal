@@ -8,7 +8,7 @@ const { uiState } = require('../store');
  * @param {Function} render - the callback which should be a render function
  * @param {Object} ui - dependency injection
  * @returns {void}
-**/
+ **/
 function cmdExit(packageName, render, { _uiState }) {
 	if (_uiState.help) {
 		_uiState.help = false;

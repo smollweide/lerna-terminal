@@ -18,7 +18,7 @@ const isFocused = _uiState => {
 /**
  * @param {Object} di - dependency injection
  * @returns {void}
-**/
+ **/
 function render({ _uiState, _renderAllPanels, _renderHelp, _renderHelpFocus, _renderFocus, _renderNotification }) {
 	if (_uiState.notifications.length > 0) {
 		_renderNotification(_render);
