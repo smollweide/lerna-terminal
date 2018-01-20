@@ -118,6 +118,6 @@
     "lint": "npm-run-all lint:*",
     "lint:js": "node_modules/.bin/eslint .",
     "prettier": "node_modules/.bin/prettier --write 'src/**/*.js' 'bin/**/*.js' --config package.json",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release"
   }
 }
