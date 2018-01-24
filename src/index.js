@@ -14,9 +14,11 @@ const commandListener = require('./commandListener');
 const runNpmScripts = require('./runNpmScripts');
 const render = require('./render');
 const executeCmd = require('./executeCmd');
+const handleKillProcess = require('./handleKillProcess');
 
 runCommander();
 provideStore();
 runNpmScripts();
 resizeListener(render);
 commandListener(executeCmd);
+handleKillProcess();
