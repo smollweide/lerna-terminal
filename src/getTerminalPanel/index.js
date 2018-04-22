@@ -2,7 +2,8 @@
 /* eslint complexity: 0*/
 'use strict';
 
-const stringLength = require('string-length');
+const stringLength = require('../stringLength');
+const stripTerminalString = require('../stripTerminalString');
 const chalk = require('chalk');
 const getFilledArray = require('../getFilledArray');
 const truncate = require('../truncate');
@@ -101,6 +102,7 @@ function getLine({ filled, start, content, end, width }) {
 		out += start;
 	}
 	if (content) {
+		content = stripTerminalString(content);
 		if (stringLength(content) > maxContentLength) {
 			content = truncate(content, maxContentLength, false);
 		}
