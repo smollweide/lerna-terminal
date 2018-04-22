@@ -4,8 +4,7 @@ const { resizeListener, getDimensions } = require('./index');
 
 describe('getDimensions', () => {
 	it('default', () => {
-		expect(typeof getDimensions().height).toBe('number');
-		expect(typeof getDimensions().width).toBe('number');
+		expect(typeof getDimensions()).toBe('object');
 	});
 	describe('resizeListener', () => {
 		it('execute without error', () => {
