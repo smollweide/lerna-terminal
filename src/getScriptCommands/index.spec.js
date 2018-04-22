@@ -1,65 +1,67 @@
-const dcopy = require('deep-copy');
-const resolve = require('../resolve');
+/* global jest */
 const getScriptCommands = require('./index');
+const getLernaPackages = require('../getLernaPackages');
+const getPackage = require('../getPackage');
+const { getProgram } = require('../commander');
+const fs = require('fs');
 
-const defaults = {
-	fs: {
-		realpathSync: value => value,
-		readFileSync: () => '{ "test": true }',
-	},
-	process: {
-		cwd: () => '/test/',
-	},
-	getLernaPackages: onMatch => {
-		onMatch('path-to-package-a');
-		onMatch('path-to-package-b');
-	},
-	program: {
-		root: false,
-	},
-};
+jest.mock('fs');
+jest.mock('../commander');
+jest.mock('../getPackage');
+jest.mock('../getLernaPackages');
 
-const packageData = {
-	scripts: {
-		start: 'npm run something',
-	},
-};
+global.process = Object.assign(process, {
+	cwd: () => '/test/',
+});
+
+fs.realpathSync.mockImplementation(value => value);
+fs.readFileSync.mockImplementation(() => '{ "test": true }');
+getLernaPackages.mockImplementation(onMatch => {
+	onMatch('path-to-package-a');
+	onMatch('path-to-package-b');
+});
 
 describe('getScriptCommands', () => {
+	beforeEach(() => {
+		getPackage.mockClear();
+		getProgram.mockClear();
+	});
 	it('find scripts', () => {
-		const _packageData = dcopy(packageData);
-		const _getScriptCommands = resolve(
-			getScriptCommands,
-			Object.assign(defaults, {
-				getPackage: () => _packageData,
-			})
-		);
-		expect(_getScriptCommands()).toEqual({ start: ['path-to-package-a', 'path-to-package-b'] });
+		getPackage.mockImplementation(() => ({
+			scripts: {
+				start: 'npm run something',
+			},
+		}));
+		getProgram.mockImplementation(() => ({
+			root: false,
+		}));
+		expect(getScriptCommands()).toEqual({ start: ['path-to-package-a', 'path-to-package-b'] });
 	});
 	it('a package without scripts', () => {
-		const _packageData = dcopy(packageData);
-		const _getScriptCommands = resolve(
-			getScriptCommands,
-			Object.assign(defaults, {
-				getPackage: path => {
-					return path === 'path-to-package-a' ? _packageData : {};
-				},
-			})
-		);
-		expect(_getScriptCommands()).toEqual({ start: ['path-to-package-a'] });
+		getPackage.mockImplementation(path => {
+			return path === 'path-to-package-a'
+				? {
+						scripts: {
+							start: 'npm run something',
+						},
+					}
+				: {};
+		});
+		getProgram.mockImplementation(() => ({
+			root: false,
+		}));
+		expect(getScriptCommands()).toEqual({ start: ['path-to-package-a'] });
 	});
 	it('find scripts including root', () => {
-		const _packageData = dcopy(packageData);
-		const _getScriptCommands = resolve(
-			getScriptCommands,
-			Object.assign(defaults, {
-				getPackage: () => _packageData,
-				program: {
-					root: true,
-				},
-			})
-		);
-		expect(_getScriptCommands()).toEqual({
+		getPackage.mockImplementation(() => ({
+			scripts: {
+				start: 'npm run something',
+			},
+		}));
+		getProgram.mockImplementation(() => ({
+			root: true,
+		}));
+		expect(getScriptCommands()).toEqual({
 			start: ['path-to-package-a', 'path-to-package-b', '/test/'],
 		});
 	});

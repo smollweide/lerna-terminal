@@ -3,7 +3,6 @@
 /* eslint no-empty: 0*/
 'use strict';
 const { spawn } = require('child_process');
-const resolve = require('../resolve');
 
 /**
  * @description run the given script in childProcess
@@ -14,19 +13,15 @@ const resolve = require('../resolve');
  * @param {Function} options.onRecieve - callback which will be fired if childProcess recieved an message
  * @param {Function} options.onError - callback which will be fired if childProcess recieved an error message
  * @param {Function} options.onError - callback which will be fired if childProcess recieved an error message
- * @param {Object} di - dependency injection
  * @returns {Object} returns an object including an start and stop method
  **/
-function runNpmScript(
-	{ scriptName, packagePath, onExit = () => {}, onRecieve = () => {}, onError = () => {} },
-	{ _spawn, _process }
-) {
+function runNpmScript({ scriptName, packagePath, onExit = () => {}, onRecieve = () => {}, onError = () => {} }) {
 	const run = cmd => {
 		const cmdArr = cmd.split(' ');
 
 		const childProcessObj = { isRunning: true };
 
-		const childProcess = _spawn(cmdArr[0], cmdArr.slice(1, cmdArr.length), {
+		const childProcess = spawn(cmdArr[0], cmdArr.slice(1, cmdArr.length), {
 			shell: true,
 			cwd: packagePath,
 			detached: true,
@@ -47,7 +42,7 @@ function runNpmScript(
 			stop() {
 				childProcessObj.isRunning = false;
 				try {
-					_process.kill(-childProcess.pid);
+					process.kill(-childProcess.pid);
 				} catch (err) {}
 			},
 			start() {
@@ -64,4 +59,4 @@ function runNpmScript(
 	return run(`npm run ${scriptName}`);
 }
 
-module.exports = resolve(runNpmScript, { spawn, process });
+module.exports = runNpmScript;

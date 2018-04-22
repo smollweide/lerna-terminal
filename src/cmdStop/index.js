@@ -1,9 +1,8 @@
 'use strict';
-const resolve = require('../resolve');
 const { state, uiState } = require('../store');
 
 const isValidStopFunction = (_state, packageName) => {
-	return (
+	return Boolean(
 		_state[packageName] && _state[packageName].terminal && typeof _state[packageName].terminal.stop === 'function'
 	);
 };
@@ -14,33 +13,33 @@ const isValidStopFunction = (_state, packageName) => {
  * @param {Object} di - dependency injection
  * @returns {void}
  **/
-function cmdStop(packageName, render, { _state, _uiState }) {
+function cmdStop(packageName, render) {
 	// if stop <packageName> try to stop script
 	if (packageName) {
-		if (isValidStopFunction(_state, packageName)) {
-			_state[packageName].terminal.stop();
+		if (isValidStopFunction(state, packageName)) {
+			state[packageName].terminal.stop();
 			render();
 		}
 		return;
 	}
 
 	// if focused run stop just for focused package
-	if (_uiState.focus && _uiState.focus !== 'all' && _uiState.focus !== '') {
-		if (isValidStopFunction(_state, _uiState.focus)) {
-			_state[_uiState.focus].terminal.stop();
+	if (uiState.focus && uiState.focus !== 'all' && uiState.focus !== '') {
+		if (isValidStopFunction(state, uiState.focus)) {
+			state[uiState.focus].terminal.stop();
 			render();
 		}
 		return;
 	}
 
 	// if split screen view stop all scripts
-	Object.keys(_state).forEach(key => {
-		if (isValidStopFunction(_state, key)) {
-			_state[key].terminal.stop();
+	Object.keys(state).forEach(key => {
+		if (isValidStopFunction(state, key)) {
+			state[key].terminal.stop();
 		}
 	});
 	render();
 }
 
-module.exports = resolve(cmdStop, { state, uiState });
-module.exports.cmdStop = cmdStop;
+module.exports = cmdStop;
+module.exports.isValidStopFunction = isValidStopFunction;

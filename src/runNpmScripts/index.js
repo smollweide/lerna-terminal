@@ -3,71 +3,54 @@
 'use strict';
 
 const path = require('path');
-const resolve = require('../resolve');
 const getScriptCommands = require('../getScriptCommands');
 const isIgnoredPackage = require('../isIgnoredPackage');
 const runNpmScript = require('../runNpmScript');
 const { getText } = require('../getTerminalPanel');
-const { program } = require('../commander');
-const { state } = require('../store');
+const { getProgram } = require('../commander');
+const { getState } = require('../store');
 const render = require('../render');
 
 /**
- * @param {Object} di - dependency injection
- * @returns {void}
+ * @returns {Object} state
  **/
-function runNpmScripts({
-	_getScriptCommands,
-	_program,
-	_path,
-	_isIgnoredPackage,
-	_state,
-	_runNpmScript,
-	_getText,
-	_render,
-}) {
-	const commands = _getScriptCommands();
+function runNpmScripts() {
+	const commands = getScriptCommands();
+	const program = getProgram();
+	const state = getState();
 
-	if (!commands[_program.script]) {
+	if (!commands[program.script]) {
 		throw new Error("the given script wasn't found!");
 	}
 
-	Object.keys(commands[_program.script]).forEach(index => {
-		const packagePath = commands[_program.script][index];
-		const packageName = _path.basename(packagePath);
-		if (_isIgnoredPackage(packagePath, _program.ignoredPackages)) {
+	Object.keys(commands[program.script]).forEach(index => {
+		const packagePath = commands[program.script][index];
+		const packageName = path.basename(packagePath);
+		if (isIgnoredPackage(packagePath, program.ignoredPackages)) {
 			return;
 		}
-		_state[packageName] = {
+		state[packageName] = {
 			log: [],
 		};
-		_state[packageName].terminal = _runNpmScript({
-			scriptName: _program.script,
+		state[packageName].terminal = runNpmScript({
+			scriptName: program.script,
 			packagePath,
 			onRecieve(text) {
-				_state[packageName].log = _state[packageName].log.concat(_getText(text.split('\n'), 'msg'));
-				_render();
+				state[packageName].log = state[packageName].log.concat(getText(text.split('\n'), 'msg'));
+				render();
 			},
 			onError(text) {
-				_state[packageName].log = _state[packageName].log.concat(_getText(text.split('\n'), 'error'));
-				_render();
+				state[packageName].log = state[packageName].log.concat(getText(text.split('\n'), 'error'));
+				render();
 			},
 			onExit() {
-				_state[packageName].log = _state[packageName].log.concat(_getText(`stop: ${packageName}`, 'error'));
-				_render();
+				state[packageName].log = state[packageName].log.concat(getText(`stop: ${packageName}`, 'error'));
+				render();
 			},
 		});
 	});
+
+	return state;
 }
 
-module.exports = resolve(runNpmScripts, {
-	getScriptCommands,
-	program,
-	path,
-	isIgnoredPackage,
-	state,
-	runNpmScript,
-	getText,
-	render,
-});
-module.exports.runNpmScripts = runNpmScripts;
+module.exports = runNpmScripts;

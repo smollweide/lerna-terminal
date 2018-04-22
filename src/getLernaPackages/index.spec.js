@@ -1,32 +1,35 @@
-const dcopy = require('deep-copy');
-const resolve = require('../resolve');
-const { getLernaPackages } = require('./index');
+/* global jest */
+const fs = require('fs');
+const glob = require('glob');
+const path = require('path');
+const getLerna = require('../getLerna');
+const getLernaPackages = require('./index');
 
-const defaults = {
-	fs: {
-		realpathSync: () => '/test/',
-	},
-	glob: {
-		sync: () => ['/a/package.json', '/b/package.json'],
-	},
-	path: {
-		join: () => '/test/',
-	},
-	getLerna: () => ({
-		packages: ['configs/*', 'packages/*/*'],
-	}),
-	process: { cwd: () => '/test/' },
-};
+jest.mock('fs');
+jest.mock('glob');
+jest.mock('path');
+jest.mock('../getLerna');
+
+global.process = Object.assign(process, {
+	cwd: () => '/test/',
+});
+
+fs.realpathSync.mockImplementation(value => value);
+glob.sync.mockImplementation(() => ['/a/package.json', '/b/package.json']);
+path.join.mockImplementation(() => '/test/');
+getLerna.mockImplementation(() => ({
+	packages: ['configs/*', 'packages/*/*'],
+}));
 
 describe('getLernaPackages', () => {
 	it('returns packages', done => {
-		const _defaults = dcopy(defaults);
-		const _getLernaPackages = resolve(getLernaPackages, _defaults);
-		expect(_getLernaPackages(() => done())).toEqual(['/a', '/b', '/a', '/b']);
+		expect(
+			getLernaPackages(() => {
+				done();
+			})
+		).toEqual(['/a', '/b', '/a', '/b']);
 	});
 	it('returns packages without onMatch', () => {
-		const _defaults = dcopy(defaults);
-		const _getLernaPackages = resolve(getLernaPackages, _defaults);
-		expect(_getLernaPackages(undefined)).toEqual(['/a', '/b', '/a', '/b']);
+		expect(getLernaPackages(undefined)).toEqual(['/a', '/b', '/a', '/b']);
 	});
 });

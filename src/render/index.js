@@ -1,48 +1,43 @@
 /* eslint complexity: 0*/
 /* eslint no-console: 0*/
 'use strict';
-const resolve = require('../resolve');
-const { uiState } = require('../store');
+const { getUiState } = require('../store');
 const renderAllPanels = require('../renderAllPanels');
 const renderFocus = require('../renderFocus');
 const renderHelp = require('../renderHelp');
 const renderHelpFocus = require('../renderHelpFocus');
 const renderNotification = require('../renderNotification');
 
-let _render;
-
 const isFocused = _uiState => {
 	return _uiState.focus && _uiState.focus !== 'all' && _uiState.focus !== '';
 };
 
 /**
- * @param {Object} di - dependency injection
  * @returns {void}
  **/
-function render({ _uiState, _renderAllPanels, _renderHelp, _renderHelpFocus, _renderFocus, _renderNotification }) {
-	if (_uiState.notifications.length > 0) {
-		_renderNotification(_render);
+function render() {
+	const uiState = getUiState();
+
+	if (uiState.notifications.length > 0) {
+		renderNotification(render);
 		return;
 	}
 
-	if (_uiState.help) {
-		if (isFocused(_uiState)) {
-			_renderHelpFocus();
+	if (uiState.help) {
+		if (isFocused(uiState)) {
+			renderHelpFocus();
 			return;
 		}
-		_renderHelp();
+		renderHelp();
 		return;
 	}
 
-	if (!isFocused(_uiState)) {
-		_renderAllPanels();
+	if (!isFocused(uiState)) {
+		renderAllPanels();
 		return;
 	}
 
-	_renderFocus();
+	renderFocus();
 }
 
-_render = resolve(render, { uiState, renderAllPanels, renderHelp, renderHelpFocus, renderFocus, renderNotification });
-
-module.exports = _render;
-module.exports.render = render;
+module.exports = render;

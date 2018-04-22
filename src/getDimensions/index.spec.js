@@ -1,29 +1,67 @@
-const dcopy = require('deep-copy');
-const resolve = require('../resolve');
-const { resizeListener, dimensions } = require('./index');
-
-const process = {
-	stdout: {
-		columns: 20,
-		rows: 20,
-	},
-};
-
-dimensions.width = 20;
-dimensions.height = 20;
+/* global jest, afterEach */
+/* eslint global-require: 0*/
+const { resizeListener, getDimensions } = require('./index');
 
 describe('getDimensions', () => {
+	it('default', () => {
+		expect(typeof getDimensions().height).toBe('number');
+		expect(typeof getDimensions().width).toBe('number');
+	});
 	describe('resizeListener', () => {
 		it('execute without error', () => {
-			const _process = dcopy(process);
-			const _resizeListener = resolve(resizeListener, { process: _process, dimensions });
-			expect(_resizeListener(undefined)).toBe(undefined);
+			global.process = {
+				stdout: {
+					columns: 20,
+					rows: 20,
+				},
+			};
+			resizeListener(() => {});
 		});
 		it('onResize', done => {
-			const _process = dcopy(process);
-			_process.stdout.columns = 22;
-			const _resizeListener = resolve(resizeListener, { process: _process, dimensions });
-			expect(_resizeListener(done)).toBe(undefined);
+			global.process = {
+				stdout: {
+					columns: 20,
+					rows: 20,
+				},
+			};
+			setTimeout(() => {
+				global.process = {
+					stdout: {
+						columns: 30,
+						rows: 20,
+					},
+				};
+			}, 500);
+			resizeListener(() => {
+				done();
+			});
+		});
+		it('nothing changed', done => {
+			global.process = {
+				stdout: {
+					columns: 20,
+					rows: 20,
+				},
+			};
+			setTimeout(() => {
+				global.process = {
+					stdout: {
+						columns: 20,
+						rows: 20,
+					},
+				};
+				setTimeout(() => {
+					global.process = {
+						stdout: {
+							columns: 30,
+							rows: 20,
+						},
+					};
+				}, 500);
+			}, 500);
+			resizeListener(() => {
+				done();
+			});
 		});
 	});
 });

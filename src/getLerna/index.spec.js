@@ -1,23 +1,17 @@
-const resolve = require('../resolve');
-const { getLerna } = require('./index');
+/* global jest */
+const getLerna = require('./index');
+const fs = require('fs');
 
-const defaults = {
-	fs: {
-		realpathSync: value => value,
-		readFileSync: () => '{ "test": true }',
-	},
-	path: {
-		join: () => '/test/lerna.json',
-	},
-	process: {
-		cwd: () => '/test/',
-	},
-	parse: () => ({ test: 'test' }),
-};
+jest.mock('fs');
 
 describe('getLerna', () => {
+	beforeEach(() => {
+		fs.realpathSync.mockClear();
+		fs.readFileSync.mockClear();
+	});
 	it('returns object', () => {
-		const _getLerna = resolve(getLerna, defaults);
-		expect(_getLerna()).toEqual({ test: true });
+		fs.realpathSync.mockImplementation(value => value);
+		fs.readFileSync.mockImplementation(() => '{ "test": true }');
+		expect(getLerna()).toEqual({ test: true });
 	});
 });

@@ -1,113 +1,128 @@
-const resolve = require('../resolve');
-const { renderNotification } = require('./index');
+/* global jest */
+const renderNotification = require('./index');
+const renderClear = require('../renderClear');
+const { getUiState } = require('../store');
+const { getBox } = require('../getTerminalPanel');
+const { getDimensions } = require('../getDimensions');
+
+jest.mock('../renderClear');
+jest.mock('../store');
+jest.mock('../getTerminalPanel');
+jest.mock('../getDimensions');
 
 describe('renderNotification', () => {
+	beforeEach(() => {
+		renderClear.mockClear();
+		getUiState.mockClear();
+		getBox.mockClear();
+		getDimensions.mockClear();
+	});
 	it('error', done => {
-		const _renderNotification = resolve(renderNotification, {
-			log(logText) {
-				expect(typeof logText).toBe('string');
-			},
-			renderClear() {},
-			uiState: {
-				notifications: [
-					{
-						type: 'error',
-						message: 'message',
-						delay: 100,
-					},
-				],
-			},
-			dimensions: {
-				width: 40,
-			},
-			getBox: () => 'test',
+		global.console.log = logText => {
+			expect(typeof logText).toBe('string');
+		};
+		renderClear.mockImplementation(() => {});
+		getUiState.mockImplementation(() => ({
+			notifications: [
+				{
+					type: 'error',
+					message: 'message',
+					delay: 100,
+				},
+			],
+		}));
+		getDimensions.mockImplementation(() => ({
+			width: 40,
+		}));
+		getBox.mockImplementation(() => 'test');
+		renderNotification(() => {
+			done();
 		});
-		_renderNotification(done);
 	});
 	it('warning', done => {
-		const _renderNotification = resolve(renderNotification, {
-			log(logText) {
-				expect(typeof logText).toBe('string');
-			},
-			renderClear() {},
-			uiState: {
-				notifications: [
-					{
-						type: 'warning',
-						message: 'message',
-						delay: 100,
-					},
-				],
-			},
-			dimensions: {
-				width: 40,
-			},
-			getBox: () => 'test',
+		global.console.log = logText => {
+			expect(typeof logText).toBe('string');
+		};
+		renderClear.mockImplementation(() => {});
+		getUiState.mockImplementation(() => ({
+			notifications: [
+				{
+					type: 'warning',
+					message: 'message',
+					delay: 100,
+				},
+			],
+		}));
+		getDimensions.mockImplementation(() => ({
+			width: 40,
+		}));
+		getBox.mockImplementation(() => 'test');
+		renderNotification(() => {
+			done();
 		});
-		_renderNotification(done);
 	});
 	it('success', done => {
-		const _renderNotification = resolve(renderNotification, {
-			log(logText) {
-				expect(typeof logText).toBe('string');
-			},
-			renderClear() {},
-			uiState: {
-				notifications: [
-					{
-						type: 'success',
-						message: 'message',
-						delay: 100,
-					},
-				],
-			},
-			dimensions: {
-				width: 40,
-			},
-			getBox: () => 'test',
+		global.console.log = logText => {
+			expect(typeof logText).toBe('string');
+		};
+		renderClear.mockImplementation(() => {});
+		getUiState.mockImplementation(() => ({
+			notifications: [
+				{
+					type: 'success',
+					message: 'message',
+					delay: 100,
+				},
+			],
+		}));
+		getDimensions.mockImplementation(() => ({
+			width: 40,
+		}));
+		getBox.mockImplementation(() => 'test');
+		renderNotification(() => {
+			done();
 		});
-		_renderNotification(done);
 	});
 	it('default', done => {
-		const _renderNotification = resolve(renderNotification, {
-			log(logText) {
-				expect(typeof logText).toBe('string');
-			},
-			renderClear() {},
-			uiState: {
-				notifications: [
-					{
-						type: 'default',
-						message: 'message',
-						delay: 100,
-					},
-				],
-			},
-			dimensions: {
-				width: 40,
-			},
-			getBox: () => 'test',
+		global.console.log = logText => {
+			expect(typeof logText).toBe('string');
+		};
+		renderClear.mockImplementation(() => {});
+		getUiState.mockImplementation(() => ({
+			notifications: [
+				{
+					type: 'default',
+					message: 'message',
+					delay: 100,
+				},
+			],
+		}));
+		getDimensions.mockImplementation(() => ({
+			width: 40,
+		}));
+		getBox.mockImplementation(() => 'test');
+		renderNotification(() => {
+			done();
 		});
-		_renderNotification(done);
 	});
 	it('fallback', done => {
-		const _renderNotification = resolve(renderNotification, {
-			log(logText) {
-				expect(typeof logText).toBe('string');
-			},
-			renderClear() {},
-			uiState: {
-				notifications: [
-					{
-						message: 'message',
-					},
-				],
-			},
-			dimensions: {
-				width: 40,
-			},
-			getBox: () => 'test',
+		global.console.log = logText => {
+			expect(typeof logText).toBe('string');
+		};
+		renderClear.mockImplementation(() => {});
+		getUiState.mockImplementation(() => ({
+			notifications: [
+				{
+					message: 'message',
+				},
+			],
+		}));
+		getDimensions.mockImplementation(() => ({
+			width: 40,
+		}));
+		getBox.mockImplementation(() => 'test');
+		renderNotification(() => {
+			done();
 		});
-		_renderNotification(done);
 	});
 });

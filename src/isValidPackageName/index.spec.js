@@ -1,7 +1,10 @@
-const resolve = require('../resolve');
-const { isValidPackageName } = require('./index');
+/* global jest */
+const isValidPackageName = require('./index');
+const { getState } = require('../store');
 
-const state = {
+jest.mock('../store');
+
+getState.mockImplementation(() => ({
 	utils: {
 		log: [123],
 		terminal: { start() {}, stop() {} },
@@ -10,16 +13,14 @@ const state = {
 		log: ['started'],
 	},
 	dateTime: {},
-};
+}));
 
 describe('isValidPackageName', () => {
 	it('true', () => {
-		const _isValidPackageName = resolve(isValidPackageName, { state });
-		expect(_isValidPackageName('utils')).toBe(true);
+		expect(isValidPackageName('utils')).toBe(true);
 	});
 	it('false', () => {
-		const _isValidPackageName = resolve(isValidPackageName, { state });
-		expect(_isValidPackageName('ui')).toBe(false);
-		expect(_isValidPackageName('dateTime')).toBe(false);
+		expect(isValidPackageName('ui')).toBe(false);
+		expect(isValidPackageName('dateTime')).toBe(false);
 	});
 });

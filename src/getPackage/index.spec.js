@@ -1,20 +1,18 @@
-const resolve = require('../resolve');
-const { getPackage } = require('./index');
+/* global jest */
+const getPackage = require('./index');
 
-const defaults = {
-	fs: {
-		realpathSync: value => value,
-		readFileSync: () => '{ "test": true }',
-	},
-	path: {
-		join: () => '/test/package.json',
-	},
-	parse: () => ({ test: 'test' }),
-};
+const fs = require('fs');
+const path = require('path');
+
+jest.mock('fs');
+jest.mock('path');
+
+fs.realpathSync.mockImplementation(value => value);
+fs.readFileSync.mockImplementation(() => '{ "test": true }');
+path.join.mockImplementation(() => '/test/package.json');
 
 describe('getPackage', () => {
 	it('returns object', () => {
-		const _getPackage = resolve(getPackage, defaults);
-		expect(_getPackage('/path/')).toEqual({ test: true });
+		expect(getPackage('/path/')).toEqual({ test: true });
 	});
 });

@@ -1,8 +1,9 @@
-const dcopy = require('deep-copy');
-const resolve = require('../resolve');
-const { _runCommander } = require('./index');
+/* global jest, afterEach */
+/* eslint global-require: 0*/
+const { runCommander, getProgram } = require('./index');
 
-const program = {
+jest.mock('commander', () => ({
+	process: { argv: ['/', '/', 'start'] },
 	arguments() {
 		return this;
 	},
@@ -18,16 +19,17 @@ const program = {
 	},
 	parse() {},
 	script: 'test',
-};
+}));
 
-const packageData = {
+jest.mock('../../package.json', () => ({
 	version: '1.0.0',
-};
+}));
 
 describe('commander', () => {
 	it('execute without error', () => {
-		const _program = dcopy(program);
-		resolve(_runCommander, { program: _program, process: { argv: ['/', '/', 'start'] }, packageData })();
-		expect(_program.script).toBe('test');
+		runCommander();
+	});
+	it('execute without error', () => {
+		getProgram();
 	});
 });

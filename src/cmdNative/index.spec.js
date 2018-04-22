@@ -1,50 +1,42 @@
-const dcopy = require('deep-copy');
-const resolve = require('../resolve');
-const { cmdNative } = require('./index');
+/* global jest */
+/* eslint global-require: 0*/
+const cmdNative = require('./index');
 
-const state = {
-	test: {
-		terminal: {
-			execute() {},
+jest.mock('../store', () => ({
+	state: {
+		test: {
+			terminal: {
+				execute() {},
+			},
 		},
+		testInvalid: {},
 	},
-	testInvalid: {},
-};
-const uiState = { notifications: [] };
+	uiState: { notifications: [] },
+}));
+const { state, uiState } = require('../store');
 
 describe('cmdNative', () => {
-	it('invalid cmd because of missing cmd', () => {
-		const _uiState = dcopy(uiState);
-		const _cmdNative = resolve(cmdNative, { state, uiState: _uiState });
-		_cmdNative(undefined, 'packageName', () => {});
-		expect(_uiState.notifications.length).toBe(1);
+	it('invalid because of missing cmd', () => {
+		cmdNative(undefined, 'packageName', () => {});
+		expect(uiState.notifications.length).toBe(1);
 	});
 	it('invalid because of missing packageName', () => {
-		const _uiState = dcopy(uiState);
-		const _cmdNative = resolve(cmdNative, { state, uiState: _uiState });
-		_cmdNative('npm run start', undefined, () => {});
-		expect(_uiState.notifications.length).toBe(0);
+		cmdNative('npm run start', undefined, () => {});
+		expect(uiState.notifications.length).toBe(1);
+	});
+	it('invalid because of missing render function', () => {
+		cmdNative('npm run start', 'testInvalid', undefined);
+		expect(uiState.notifications.length).toBe(1);
 	});
 	it('invalid because of missing execute function', () => {
-		const _uiState = dcopy(uiState);
-		const _state = dcopy(state);
-		const _cmdNative = resolve(cmdNative, { state: _state, uiState: _uiState });
-		_cmdNative('npm run start', 'testInvalid', () => {});
-		expect(_uiState.notifications.length).toBe(1);
+		cmdNative('npm run start', 'testInvalid', () => {});
+		expect(uiState.notifications.length).toBe(2);
 	});
-	it('execute cmd', done => {
-		const _uiState = dcopy(uiState);
-		const _state = dcopy(state);
-		_state.test.terminal.execute = () => {
-			done();
-		};
-		const _cmdNative = resolve(cmdNative, { state: _state, uiState: _uiState });
-		_cmdNative('npm run start', 'test', () => {});
-	});
-	it('execute cmd -> rerender', done => {
-		const _uiState = dcopy(uiState);
-		const _state = dcopy(state);
-		const _cmdNative = resolve(cmdNative, { state: _state, uiState: _uiState });
-		_cmdNative('npm run start', 'test', done);
+	it('execute cmd', () => {
+		const spy = jest.spyOn(state.test.terminal, 'execute');
+		cmdNative('npm run start', 'test', () => {});
+		expect(spy).toHaveBeenCalled();
+		spy.mockReset();
+		spy.mockRestore();
 	});
 });

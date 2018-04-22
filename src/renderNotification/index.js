@@ -1,11 +1,10 @@
 /* eslint no-console: 0*/
 'use strict';
 const chalk = require('chalk');
-const resolve = require('../resolve');
 const renderClear = require('../renderClear');
-const { uiState } = require('../store');
+const { getUiState } = require('../store');
 const { getBox } = require('../getTerminalPanel');
-const { dimensions } = require('../getDimensions');
+const { getDimensions } = require('../getDimensions');
 
 /**
  * @description clears the terminal
@@ -13,9 +12,11 @@ const { dimensions } = require('../getDimensions');
  * @param {Object} di - dependency injection
  * @returns {void}
  **/
-function renderNotification(render, { _log, _renderClear, _uiState, _dimensions, _getBox }) {
-	_renderClear();
-	const { type = 'info', message, delay = 2000 } = _uiState.notifications[0];
+function renderNotification(render) {
+	renderClear();
+	const uiState = getUiState();
+	const dimensions = getDimensions();
+	const { type = 'info', message, delay = 2000 } = uiState.notifications[0];
 	let msg;
 
 	const colored = (color, value) => {
@@ -41,13 +42,12 @@ function renderNotification(render, { _log, _renderClear, _uiState, _dimensions,
 			msg = message;
 			break;
 	}
-	_log(_getBox(type, [msg], _dimensions.width));
+	console.log(getBox(type, [msg], dimensions.width));
 	setTimeout(() => {
-		const notifications = _uiState.notifications.slice(1, _uiState.notifications.length - 1);
-		_uiState.notifications = notifications;
+		const notifications = uiState.notifications.slice(1, uiState.notifications.length - 1);
+		uiState.notifications = notifications;
 		render();
 	}, delay);
 }
 
-module.exports = resolve(renderNotification, { log: console.log, renderClear, uiState, dimensions, getBox });
-module.exports.renderNotification = renderNotification;
+module.exports = renderNotification;

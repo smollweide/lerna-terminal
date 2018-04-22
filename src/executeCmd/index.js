@@ -1,6 +1,5 @@
 /* eslint complexity: 0*/
 'use strict';
-const resolve = require('../resolve');
 const render = require('../render');
 const getFocused = require('../getFocused');
 const cmdStart = require('../cmdStart');
@@ -28,25 +27,9 @@ const isValidCmd = cmd => {
 
 /**
  * @param {string} cmd - the user entered command
- * @param {Object} di - dependencies
  * @returns {boolean} returns true if packageName is a part of packagePath
  **/
-function executeCmd(
-	cmd,
-	{
-		_render,
-		_getFocused,
-		_cmdNative,
-		_cmdStart,
-		_cmdStop,
-		_cmdClear,
-		_cmdFocus,
-		_cmdHelp,
-		_cmdExit,
-		_cmdInvalid,
-		_isValidPackageName,
-	}
-) {
+function executeCmd(cmd) {
 	if (typeof cmd !== 'string' || cmd === '') {
 		return;
 	}
@@ -56,34 +39,34 @@ function executeCmd(
 		.replace(/\n|\t/g, '')
 		.split(' ');
 
-	const focusedPackageName = _getFocused();
+	const focusedPackageName = getFocused();
 	const _isValidCmd = isValidCmd(cmdSpl[0]);
 
 	// focus shortcut
-	if (!_isValidCmd && cmdSpl.length === 1 && _isValidPackageName(cmdSpl[0])) {
-		_cmdFocus(cmdSpl[0], _render);
+	if (!_isValidCmd && cmdSpl.length === 1 && isValidPackageName(cmdSpl[0])) {
+		cmdFocus(cmdSpl[0], render);
 		return;
 	}
 
 	const COMMAND_EXCECUTE_MAP = {
-		CLEAR: _cmdClear,
-		FOCUS: _cmdFocus,
-		EXIT: _cmdExit,
-		HELP: _cmdHelp,
-		START: _cmdStart,
-		STOP: _cmdStop,
+		CLEAR: cmdClear,
+		FOCUS: cmdFocus,
+		EXIT: cmdExit,
+		HELP: cmdHelp,
+		START: cmdStart,
+		STOP: cmdStop,
 	};
 
 	if (focusedPackageName) {
 		// run native cmd on child_process for example 'npm run test' in case of a child_process is focused
 		if (!_isValidCmd) {
-			_cmdNative(cmd, focusedPackageName, _render);
+			cmdNative(cmd, focusedPackageName, render);
 			return;
 		}
 
 		// run cmd on child_process in case of a child_process is focused
 		// lerna-terminal/utils~$ start
-		COMMAND_EXCECUTE_MAP[cmdSpl[0].toUpperCase()](focusedPackageName, _render);
+		COMMAND_EXCECUTE_MAP[cmdSpl[0].toUpperCase()](focusedPackageName, render);
 		return;
 	}
 
@@ -91,31 +74,18 @@ function executeCmd(
 		// run cmd on all child_processes in case of not focused and without packageName in cmd
 		// lerna-terminal~$ start
 		if (cmdSpl.length === 1) {
-			COMMAND_EXCECUTE_MAP[cmdSpl[0].toUpperCase()](undefined, _render);
+			COMMAND_EXCECUTE_MAP[cmdSpl[0].toUpperCase()](undefined, render);
 			return;
 		}
 
 		// run cmd on given child_process (described with second argument)
 		// lerna-terminal~$ start utils
-		COMMAND_EXCECUTE_MAP[cmdSpl[0].toUpperCase()](cmdSpl[1], _render);
+		COMMAND_EXCECUTE_MAP[cmdSpl[0].toUpperCase()](cmdSpl[1], render);
 		return;
 	}
 
 	// invalid command will be ignored
-	_cmdInvalid(_render, cmd);
+	cmdInvalid(render, cmd);
 }
 
-module.exports = resolve(executeCmd, {
-	render,
-	getFocused,
-	cmdNative,
-	cmdStart,
-	cmdStop,
-	cmdClear,
-	cmdFocus,
-	cmdHelp,
-	cmdExit,
-	cmdInvalid,
-	isValidPackageName,
-});
-module.exports.executeCmd = executeCmd;
+module.exports = executeCmd;

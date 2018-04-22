@@ -1,71 +1,101 @@
-const resolve = require('../resolve');
-const { render } = require('./index');
+/* global jest */
+const render = require('./index');
+const { getUiState } = require('../store');
+const renderAllPanels = require('../renderAllPanels');
+const renderFocus = require('../renderFocus');
+const renderHelp = require('../renderHelp');
+const renderHelpFocus = require('../renderHelpFocus');
+const renderNotification = require('../renderNotification');
+
+jest.mock('../store');
+jest.mock('../renderAllPanels');
+jest.mock('../renderFocus');
+jest.mock('../renderHelp');
+jest.mock('../renderHelpFocus');
+jest.mock('../renderNotification');
 
 describe('render', () => {
+	beforeEach(() => {
+		getUiState.mockClear();
+		renderAllPanels.mockClear();
+		renderHelp.mockClear();
+		renderFocus.mockClear();
+		renderHelpFocus.mockClear();
+		renderNotification.mockClear();
+	});
 	it('focus all', done => {
-		resolve(render, {
-			uiState: { focus: 'all', notifications: [] },
-			renderAllPanels: done,
-			renderHelp() {},
-			renderFocus() {},
-			renderHelpFocus() {},
-		})();
+		getUiState.mockImplementation(() => ({ focus: 'all', notifications: [] }));
+		renderAllPanels.mockImplementation(() => {
+			done();
+		});
+		renderHelp.mockImplementation(() => {});
+		renderFocus.mockImplementation(() => {});
+		renderHelpFocus.mockImplementation(() => {});
+		renderNotification.mockImplementation(() => {});
+		expect(render()).toBe(undefined);
 	});
 	it('render notification', done => {
-		resolve(render, {
-			uiState: {
-				focus: 'all',
-				notifications: [
-					{
-						type: 'error',
-						message: 'message',
-						delay: 10,
-					},
-				],
-			},
-			renderAllPanels() {},
-			renderHelp() {},
-			renderFocus() {},
-			renderHelpFocus() {},
-			renderNotification: () => {
-				done();
-			},
-		})();
+		getUiState.mockImplementation(() => ({
+			focus: 'all',
+			notifications: [
+				{
+					type: 'error',
+					message: 'message',
+					delay: 10,
+				},
+			],
+		}));
+		renderAllPanels.mockImplementation(() => {});
+		renderHelp.mockImplementation(() => {});
+		renderFocus.mockImplementation(() => {});
+		renderHelpFocus.mockImplementation(() => {});
+		renderNotification.mockImplementation(() => {
+			done();
+		});
+		expect(render()).toBe(undefined);
 	});
 	it('focus empty string', done => {
-		resolve(render, {
-			uiState: { focus: '', notifications: [] },
-			renderAllPanels: done,
-			renderHelp() {},
-			renderFocus() {},
-			renderHelpFocus() {},
-		})();
+		getUiState.mockImplementation(() => ({ focus: '', notifications: [] }));
+		renderAllPanels.mockImplementation(() => {
+			done();
+		});
+		renderHelp.mockImplementation(() => {});
+		renderFocus.mockImplementation(() => {});
+		renderHelpFocus.mockImplementation(() => {});
+		renderNotification.mockImplementation(() => {});
+		expect(render()).toBe(undefined);
 	});
 	it('help', done => {
-		resolve(render, {
-			uiState: { focus: 'all', notifications: [], help: true },
-			renderAllPanels() {},
-			renderHelp: done,
-			renderFocus() {},
-			renderHelpFocus() {},
-		})();
+		getUiState.mockImplementation(() => ({ focus: '', notifications: [], help: true }));
+		renderAllPanels.mockImplementation(() => {});
+		renderHelp.mockImplementation(() => {
+			done();
+		});
+		renderFocus.mockImplementation(() => {});
+		renderHelpFocus.mockImplementation(() => {});
+		renderNotification.mockImplementation(() => {});
+		expect(render()).toBe(undefined);
 	});
 	it('focus help', done => {
-		resolve(render, {
-			uiState: { focus: 'test', notifications: [], help: true },
-			renderAllPanels() {},
-			renderHelp() {},
-			renderFocus() {},
-			renderHelpFocus: done,
-		})();
+		getUiState.mockImplementation(() => ({ focus: 'test', notifications: [], help: true }));
+		renderAllPanels.mockImplementation(() => {});
+		renderHelp.mockImplementation(() => {});
+		renderFocus.mockImplementation(() => {});
+		renderHelpFocus.mockImplementation(() => {
+			done();
+		});
+		renderNotification.mockImplementation(() => {});
+		expect(render()).toBe(undefined);
 	});
 	it('focus', done => {
-		resolve(render, {
-			uiState: { focus: 'test', notifications: [] },
-			renderAllPanels() {},
-			renderHelp() {},
-			renderFocus: done,
-			renderHelpFocus() {},
-		})();
+		getUiState.mockImplementation(() => ({ focus: 'test', notifications: [] }));
+		renderAllPanels.mockImplementation(() => {});
+		renderHelp.mockImplementation(() => {});
+		renderFocus.mockImplementation(() => {
+			done();
+		});
+		renderHelpFocus.mockImplementation(() => {});
+		renderNotification.mockImplementation(() => {});
+		expect(render()).toBe(undefined);
 	});
 });

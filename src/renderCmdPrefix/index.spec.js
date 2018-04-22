@@ -1,33 +1,31 @@
-const resolve = require('../resolve');
-const { renderCmdPrefix } = require('./index');
+/* global jest */
+const renderCmdPrefix = require('./index');
+const { getUiState } = require('../store');
 
-const uiState = {
-	focus: 'all',
-};
+jest.mock('../store');
 
 describe('renderCmdPrefix', () => {
-	// it('default', () => {});
+	beforeEach(() => {
+		getUiState.mockClear();
+	});
 	it('default', done => {
-		const _uiState = Object.assign({}, uiState);
-		const _renderCmdPrefix = resolve(renderCmdPrefix, {
-			uiState: _uiState,
-			write(writeText) {
-				expect(typeof writeText).toBe('string');
-				done();
-			},
-		});
-		_renderCmdPrefix();
+		getUiState.mockImplementation(() => ({
+			focus: 'all',
+		}));
+		global.process.stdout.write = writeText => {
+			expect(writeText).toBe('lerna-terminal~$ ');
+			done();
+		};
+		renderCmdPrefix();
 	});
 	it('focus "log"', done => {
-		const _uiState = Object.assign({}, uiState);
-		_uiState.focus = 'log';
-		const _renderCmdPrefix = resolve(renderCmdPrefix, {
-			uiState: _uiState,
-			write(writeText) {
-				expect(typeof writeText).toBe('string');
-				done();
-			},
-		});
-		_renderCmdPrefix();
+		getUiState.mockImplementation(() => ({
+			focus: 'log',
+		}));
+		global.process.stdout.write = writeText => {
+			expect(writeText).toBe('lerna-terminal/log~$ ');
+			done();
+		};
+		renderCmdPrefix();
 	});
 });

@@ -2,11 +2,6 @@
 /* eslint complexity: 0*/
 'use strict';
 
-// TODOS
-// - terminal title
-// - don't ignore main script
-// - generic usage
-
 const { runCommander } = require('./commander');
 const { resizeListener } = require('./getDimensions');
 const { provideStore } = require('./store');

@@ -1,34 +1,37 @@
-const resolve = require('../resolve');
-const cmdClear = require('./index');
+/* global jest */
+jest.mock('../store', () => {
+	return {
+		state: {
+			utils: {
+				log: [123],
+			},
+			ui: {
+				log: ['started'],
+			},
+			dateTime: {},
+		},
+		uiState: {},
+		provideStore: jest.fn(),
+	};
+});
 
-const state = {
-	utils: {
-		log: [123],
-	},
-	ui: {
-		log: ['started'],
-	},
-	dateTime: {},
-};
+const cmdClear = require('./index');
+const store = require('../store');
 
 describe('cmdClear', () => {
 	it('execute without error', done => {
-		const _cmdClear = resolve(cmdClear, Object.assign({}, { state }));
-		expect(_cmdClear('utils', done)).toBe(undefined);
+		expect(cmdClear('utils', done)).toBe(undefined);
 	});
 	it('clear defined package', done => {
-		const _cmdClear = resolve(cmdClear, Object.assign({}, { state }));
-		_cmdClear('utils', done);
-		expect(state.utils.log).toEqual([]);
+		cmdClear('utils', done);
+		expect(store.state.utils.log).toEqual([]);
 	});
 	it('try clear undefined package', done => {
-		const _cmdClear = resolve(cmdClear, Object.assign({}, { state }));
-		expect(_cmdClear('utils2', done)).toBe(undefined);
+		expect(cmdClear('utils2', done)).toBe(undefined);
 	});
 	it('clear all package', done => {
-		const _cmdClear = resolve(cmdClear, Object.assign({}, { state }));
-		_cmdClear(undefined, done);
-		expect(state.utils.log).toEqual([]);
-		expect(state.ui.log).toEqual([]);
+		cmdClear(undefined, done);
+		expect(store.state.utils.log).toEqual([]);
+		expect(store.state.ui.log).toEqual([]);
 	});
 });

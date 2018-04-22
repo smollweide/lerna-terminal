@@ -16,4 +16,17 @@ function provideStore() {
 	uiState.focus = program.focus ? program.focus : 'all';
 }
 
-module.exports = { state, uiState, provideStore };
+/**
+ * @returns {Object} state
+ **/
+function getState() {
+	return state;
+}
+/**
+ * @returns {Object} uiState
+ **/
+function getUiState() {
+	return uiState;
+}
+
+module.exports = { state, getState, uiState, getUiState, provideStore };

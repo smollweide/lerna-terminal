@@ -1,108 +1,64 @@
-const resolve = require('../resolve');
-const { executeCmd } = require('./index');
+/* global jest, afterEach */
+/* eslint global-require: 0*/
+const executeCmd = require('./index');
+const cmdFocus = require('../cmdFocus');
+const cmdNative = require('../cmdNative');
+const cmdStart = require('../cmdStart');
+const cmdInvalid = require('../cmdInvalid');
+const render = require('../render');
+const getFocused = require('../getFocused');
+const isValidPackageName = require('../isValidPackageName');
 
-// const uiState = {
-// 	focus: 'utils',
-// };
-
-const defaults = {
-	render() {},
-	getFocused() {},
-	cmdNative() {},
-	cmdStart() {},
-	cmdStop() {},
-	cmdClear() {},
-	cmdFocus() {},
-	cmdHelp() {},
-	cmdExit() {},
-	cmdInvalid() {},
-	isValidPackageName: () => true,
-};
+jest.mock('../cmdFocus', () => jest.fn());
+jest.mock('../cmdNative', () => jest.fn());
+jest.mock('../cmdStart', () => jest.fn());
+jest.mock('../cmdInvalid', () => jest.fn());
+jest.mock('../isValidPackageName', () => jest.fn());
+jest.mock('../render', () => jest.fn());
+jest.mock('../getFocused', () => jest.fn());
 
 describe('executeCmd', () => {
 	it('invalid with empty string', () => {
-		const _executeCmd = resolve(executeCmd, Object.assign({}, defaults));
-		expect(_executeCmd('')).toBe(undefined);
+		expect(executeCmd('')).toBe(undefined);
 	});
 	it('invalid with undefined', () => {
-		const _executeCmd = resolve(executeCmd, Object.assign({}, defaults));
-		expect(_executeCmd(undefined)).toBe(undefined);
+		expect(executeCmd(undefined)).toBe(undefined);
 	});
 
 	// focus shortcut
-	it('focus shortcut', done => {
-		const _executeCmd = resolve(
-			executeCmd,
-			Object.assign({}, defaults, {
-				cmdFocus(packageName) {
-					expect(packageName).toBe('utils');
-					done();
-				},
-			})
-		);
-		expect(_executeCmd('utils')).toBe(undefined);
+	it('focus shortcut', () => {
+		isValidPackageName.mockReturnValueOnce(true);
+		executeCmd('utils');
+		expect(cmdFocus).toBeCalledWith('utils', render);
 	});
 
 	// focusedPackageName
 	describe('focusedPackageName', () => {
-		it('execute native (means cmd for package child_process)', done => {
-			const _executeCmd = resolve(
-				executeCmd,
-				Object.assign({}, defaults, {
-					getFocused: () => 'utils',
-					cmdNative() {
-						done();
-					},
-				})
-			);
-			expect(_executeCmd('npm run test')).toBe(undefined);
+		it('execute native (means cmd for package child_process)', () => {
+			getFocused.mockReturnValueOnce('utils');
+			executeCmd('npm run test');
+			expect(cmdNative).toBeCalledWith('npm run test', 'utils', render);
 		});
-
-		it('execute start child_process because of focused', done => {
-			const _executeCmd = resolve(
-				executeCmd,
-				Object.assign({}, defaults, {
-					getFocused: () => 'utils',
-					cmdStart(packageName) {
-						expect(packageName).toBe('utils');
-						done();
-					},
-				})
-			);
-			expect(_executeCmd('start utils')).toBe(undefined);
+		it('execute start child_process because of focused', () => {
+			getFocused.mockReturnValueOnce('utils');
+			executeCmd('start utils');
+			expect(cmdStart).toBeCalledWith('utils', render);
 		});
 	});
 
 	describe('isValidCmd', () => {
-		it('execute start all', done => {
-			const _executeCmd = resolve(executeCmd, Object.assign({}, defaults, { cmdStart: done }));
-			expect(_executeCmd('start')).toBe(undefined);
+		it('execute start all', () => {
+			executeCmd('start');
+			expect(cmdStart).toBeCalledWith(undefined, render);
 		});
-
-		it('execute start child_process because of second cmd argument', done => {
-			const _executeCmd = resolve(
-				executeCmd,
-				Object.assign({}, defaults, {
-					cmdStart(packageName) {
-						expect(packageName).toBe('utils');
-						done();
-					},
-				})
-			);
-			expect(_executeCmd('start utils')).toBe(undefined);
+		it('execute start child_process because of second cmd argument', () => {
+			executeCmd('start utils');
+			expect(cmdStart).toBeCalledWith('utils', render);
 		});
 	});
 
 	it('nothing', () => {
-		const _executeCmd = resolve(
-			executeCmd,
-			Object.assign({}, defaults, {
-				isValidPackageName: () => false,
-				cmdFocus(packageName) {
-					expect(packageName).toBe('');
-				},
-			})
-		);
-		expect(_executeCmd('unknown')).toBe(undefined);
+		executeCmd('unknown');
+		expect(cmdInvalid).toBeCalledWith(render, 'unknown');
 	});
 });

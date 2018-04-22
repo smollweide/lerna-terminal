@@ -1,13 +1,12 @@
 /* eslint no-console: 0*/
 'use strict';
-const resolve = require('../resolve');
 const renderCmdPrefix = require('../renderCmdPrefix');
 const renderClear = require('../renderClear');
 const getFilledArray = require('../getFilledArray');
-const { state } = require('../store');
+const { getState } = require('../store');
 const { getTerminalPanel } = require('../getTerminalPanel');
 const mergePanelsRow = require('../mergePanelsRow');
-const { dimensions } = require('../getDimensions');
+const { getDimensions } = require('../getDimensions');
 
 /**
  * @param {number} amountOfProcesses - amount of processes
@@ -31,19 +30,19 @@ function getColumnsAndRows(amountOfProcesses) {
 }
 
 /**
- * @param {Object} di - dependency injection
  * @returns {void}
  **/
-function renderAllPanels({ _state, _log, _renderClear, _renderCmdPrefix, _dimensions }) {
-	const currentState = Object.assign({}, _state);
+function renderAllPanels() {
+	const currentState = Object.assign({}, getState());
+	const dimensions = getDimensions();
 	const stateKeys = Object.keys(currentState);
 	const { columns, rows } = getColumnsAndRows(stateKeys.length);
-	const panelWidth = parseInt(_dimensions.width / columns, 10);
-	const panelHeight = parseInt(_dimensions.height / rows, 10) - 1;
+	const panelWidth = parseInt(dimensions.width / columns, 10);
+	const panelHeight = parseInt(dimensions.height / rows, 10) - 1;
 	const renderArrInner = getFilledArray(columns, '');
 	const renderArr = getFilledArray(rows, renderArrInner);
 
-	_renderClear();
+	renderClear();
 
 	// map panel into row structure
 	let counterColumn = 0;
@@ -68,11 +67,10 @@ function renderAllPanels({ _state, _log, _renderClear, _renderCmdPrefix, _dimens
 	});
 
 	renderArr.forEach(panelRow => {
-		_log(mergePanelsRow(panelRow, panelHeight).join('\n'));
+		console.log(mergePanelsRow(panelRow, panelHeight).join('\n'));
 	});
-	_renderCmdPrefix();
+	renderCmdPrefix();
 }
 
-module.exports = resolve(renderAllPanels, { state, log: console.log, renderClear, renderCmdPrefix, dimensions });
-module.exports.renderAllPanels = renderAllPanels;
+module.exports = renderAllPanels;
 module.exports.getColumnsAndRows = getColumnsAndRows;

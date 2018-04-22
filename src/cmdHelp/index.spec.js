@@ -1,19 +1,22 @@
-const resolve = require('../resolve');
-const cmdHelp = require('./index');
-
-const uiState = {
-	focus: 'all',
-};
+/* global jest */
+/* eslint global-require: 0*/
 
 describe('cmdHelp', () => {
-	it('execute without error', done => {
-		const _cmdHelp = resolve(cmdHelp, { uiState });
-		expect(_cmdHelp('', done)).toBe(undefined);
-	});
 	it('set help flag', done => {
-		const _uiState = Object.assign({}, uiState);
-		const _cmdHelp = resolve(cmdHelp, { uiState: _uiState });
-		_cmdHelp('', done);
-		expect(_uiState.help).toBe(true);
+		jest.mock('../store', () => {
+			return {
+				state: {},
+				uiState: {
+					focus: 'utils',
+					help: false,
+				},
+				provideStore: jest.fn(),
+			};
+		});
+		const { uiState } = require('../store');
+		const cmdHelp = require('./index');
+		cmdHelp('', done);
+		expect(uiState.help).toBe(true);
+		jest.unmock('../store');
 	});
 });

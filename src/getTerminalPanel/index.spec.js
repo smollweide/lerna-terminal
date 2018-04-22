@@ -1,4 +1,3 @@
-// const dcopy = require('deep-copy');
 const fs = require('fs');
 const { getTerminalPanel, getLine, getTerminal, getText, getBox } = require('./index');
 

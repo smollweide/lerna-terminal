@@ -1,8 +1,6 @@
 /* eslint complexity: 0*/
 
 'use strict';
-const resolve = require('../resolve');
-
 const { state, uiState } = require('../store');
 
 const isValidChildProcessExecute = (_state, packageName) => {
@@ -30,28 +28,26 @@ const notifications = {
  * @param {string} cmd - the entered command
  * @param {string} packageName - the package name
  * @param {Function} render - the callback which should be a render function
- * @param {Object} ui - dependency injection
  * @returns {void}
  **/
-function cmdNative(cmd, packageName, render, { _state, _uiState }) {
+function cmdNative(cmd, packageName, render) {
 	if (typeof cmd !== 'string' || cmd === '') {
-		_uiState.notifications.push(notifications.invalidCmd());
+		uiState.notifications.push(notifications.invalidCmd());
 		return;
 	}
 
 	cmd = cmd.trim();
 
-	if (typeof packageName !== 'string' || packageName === '') {
+	if (typeof packageName !== 'string' || packageName === '' || typeof render !== 'function') {
 		return;
 	}
-	if (!isValidChildProcessExecute(_state, packageName)) {
-		_uiState.notifications.push(notifications.invalidChildProcessExecute());
+	if (!isValidChildProcessExecute(state, packageName)) {
+		uiState.notifications.push(notifications.invalidChildProcessExecute());
 		return;
 	}
 
-	_state[packageName].terminal.execute(cmd);
+	state[packageName].terminal.execute(cmd);
 	render();
 }
 
-module.exports = resolve(cmdNative, { state, uiState });
-module.exports.cmdNative = cmdNative;
+module.exports = cmdNative;

@@ -1,11 +1,11 @@
-const dcopy = require('deep-copy');
-const resolve = require('../resolve');
-const { commandListener } = require('./index');
+/* global jest, afterEach */
+/* eslint global-require: 0*/
+const commandListener = require('./index');
 
-const process = {
+const _process = {
 	stdin: {
-		setEncoding() {},
-		on() {},
+		setEncoding: jest.fn(),
+		on: jest.fn(),
 		read() {
 			return 'test';
 		},
@@ -14,29 +14,33 @@ const process = {
 
 describe('commandListener', () => {
 	it('execute without error', done => {
-		const _process = dcopy(process);
-		_process.stdin.on = (value, cb) => {
-			expect(value).toBe('readable');
-			cb();
-		};
-		const _commandListener = resolve(commandListener, { process: _process });
+		global.process = Object.assign(_process, {
+			stdin: Object.assign(_process.stdin, {
+				on: (value, cb) => {
+					expect(value).toBe('readable');
+					cb();
+				},
+			}),
+		});
 		expect(
-			_commandListener(value => {
+			commandListener(value => {
 				expect(value).toBe('test');
 				done();
 			})
 		).toBe(undefined);
 	});
 	it('execute without error when chunk is null', () => {
-		const _process = dcopy(process);
-		_process.stdin.on = (value, cb) => {
-			expect(value).toBe('readable');
-			cb();
-		};
-		_process.stdin.read = () => {
-			return null;
-		};
-		const _commandListener = resolve(commandListener, { process: _process });
-		expect(_commandListener(() => {})).toBe(undefined);
+		global.process = Object.assign(_process, {
+			stdin: Object.assign(_process.stdin, {
+				on: (value, cb) => {
+					expect(value).toBe('readable');
+					cb();
+				},
+				read() {
+					return null;
+				},
+			}),
+		});
+		expect(commandListener(() => {})).toBe(undefined);
 	});
 });

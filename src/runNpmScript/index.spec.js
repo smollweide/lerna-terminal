@@ -1,134 +1,205 @@
-const resolve = require('../resolve');
+/* global jest */
+const { spawn } = require('child_process');
 const runNpmScript = require('./index');
+
+jest.mock('child_process');
 
 const options = {
 	scriptName: 'utils',
 	packagePath: '/path/',
 };
 
-const spawnReturn = {
-	stdout: {
-		on() {},
-	},
-	stderr: {
-		on() {},
-	},
-	on() {},
-	kill() {},
-};
-
 describe('runNpmScript', () => {
+	beforeEach(() => {
+		spawn.mockClear();
+	});
 	it('start exist', () => {
-		const _runNpmScript = resolve(runNpmScript, {
-			spawn() {
-				return spawnReturn;
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on() {},
 			},
-		});
-		expect(typeof _runNpmScript(options).start).toBe('function');
+			stderr: {
+				on() {},
+			},
+			on() {},
+			kill() {},
+		}));
+		expect(typeof runNpmScript(options).start).toBe('function');
 	});
 	it('stop exist', () => {
-		const _runNpmScript = resolve(runNpmScript, {
-			spawn() {
-				return spawnReturn;
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on() {},
 			},
-		});
-		expect(typeof _runNpmScript(options).stop).toBe('function');
+			stderr: {
+				on() {},
+			},
+			on() {},
+			kill() {},
+		}));
+		expect(typeof runNpmScript(options).stop).toBe('function');
 	});
 	it('onRecieve', done => {
-		const _options = Object.assign({}, options);
-		_options.onRecieve = text => {
-			expect(text).toBe('test');
-			done();
-		};
-		const _spawnReturn = Object.assign({}, spawnReturn);
-		_spawnReturn.stdout.on = (value, cb) => {
-			cb('test\n');
-		};
-		const _runNpmScript = resolve(runNpmScript, {
-			spawn() {
-				return _spawnReturn;
-			},
-		});
-		expect(typeof _runNpmScript(_options)).toBe('object');
-	});
-	it('onError', done => {
-		const _options = Object.assign({}, options);
-		_options.onError = text => {
-			expect(text).toBe('test');
-			done();
-		};
-		const _spawnReturn = Object.assign({}, spawnReturn);
-		_spawnReturn.stderr.on = (value, cb) => {
-			cb('test\n');
-		};
-		const _runNpmScript = resolve(runNpmScript, {
-			spawn() {
-				return _spawnReturn;
-			},
-		});
-		expect(typeof _runNpmScript(_options)).toBe('object');
-	});
-	it('onExit', done => {
-		const _options = Object.assign({}, options);
-		_options.onExit = done;
-		const _spawnReturn = Object.assign({}, spawnReturn);
-		_spawnReturn.on = (value, cb) => {
-			cb();
-		};
-		const _runNpmScript = resolve(runNpmScript, {
-			spawn() {
-				return _spawnReturn;
-			},
-		});
-		expect(typeof _runNpmScript(_options)).toBe('object');
-	});
-	it('onExit undefined', () => {
-		const _options = Object.assign({}, options);
-		_options.onExit = undefined;
-		const _spawnReturn = Object.assign({}, spawnReturn);
-		_spawnReturn.on = (value, cb) => {
-			cb();
-		};
-		const _runNpmScript = resolve(runNpmScript, {
-			spawn() {
-				return _spawnReturn;
-			},
-		});
-		expect(typeof _runNpmScript(_options)).toBe('object');
-	});
-	it('stop() -> kill', done => {
-		const _options = Object.assign({}, options);
-		const _spawnReturn = Object.assign({}, spawnReturn);
-		const _runNpmScript = resolve(runNpmScript, {
-			spawn() {
-				return _spawnReturn;
-			},
-			process: {
-				kill() {
-					done();
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on(value, cb) {
+					cb('test\n');
 				},
 			},
+			stderr: {
+				on() {},
+			},
+			on() {},
+			kill() {},
+		}));
+		const _options = Object.assign({}, options, {
+			onRecieve(text) {
+				expect(text).toBe('test');
+				done();
+			},
 		});
-		_runNpmScript(_options).stop();
+		expect(typeof runNpmScript(_options)).toBe('object');
+	});
+	it('onError', done => {
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on() {},
+			},
+			stderr: {
+				on(value, cb) {
+					cb('test\n');
+				},
+			},
+			on() {},
+			kill() {},
+		}));
+		const _options = Object.assign({}, options, {
+			onError(text) {
+				expect(text).toBe('test');
+				done();
+			},
+		});
+		expect(typeof runNpmScript(_options)).toBe('object');
+	});
+	it('onExit', done => {
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on() {},
+			},
+			stderr: {
+				on() {},
+			},
+			on(value, cb) {
+				cb();
+			},
+			kill() {},
+		}));
+		const _options = Object.assign({}, options, {
+			onExit() {
+				done();
+			},
+		});
+		expect(typeof runNpmScript(_options)).toBe('object');
+	});
+	it('onExit undefined', () => {
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on() {},
+			},
+			stderr: {
+				on() {},
+			},
+			on(value, cb) {
+				cb();
+			},
+			kill() {},
+		}));
+		const _options = Object.assign({}, options, {
+			onExit: undefined,
+		});
+		expect(typeof runNpmScript(_options)).toBe('object');
+	});
+	it('stop() -> kill', done => {
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on() {},
+			},
+			stderr: {
+				on() {},
+			},
+			on(value, cb) {
+				cb();
+			},
+			kill() {},
+		}));
+		const _options = Object.assign({}, options);
+		global.process.kill = () => {
+			done();
+		};
+		runNpmScript(_options).stop();
 	});
 	it('start() -> return run()', () => {
 		const _options = Object.assign({}, options);
-		const _spawnReturn = Object.assign({}, spawnReturn);
-		const _runNpmScript = resolve(runNpmScript, {
-			spawn() {
-				return _spawnReturn;
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on() {},
 			},
-		});
-		expect(typeof _runNpmScript(_options).start()).toBe('object');
+			stderr: {
+				on() {},
+			},
+			on() {},
+			kill() {},
+		}));
+		expect(typeof runNpmScript(_options).start()).toBe('object');
 	});
 	it('execute() -> return run()', () => {
 		const _options = Object.assign({}, options);
-		const _spawnReturn = Object.assign({}, spawnReturn);
-		const _runNpmScript = resolve(runNpmScript, {
-			spawn() {
-				return _spawnReturn;
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on() {},
 			},
+			stderr: {
+				on() {},
+			},
+			on() {},
+			kill() {},
+		}));
+		expect(typeof runNpmScript(_options).execute('npm run test')).toBe('object');
+	});
+	it('dafault fallback onRecieve', () => {
+		const _options = Object.assign({}, options, {
+			onRecieve: undefined,
 		});
-		expect(typeof _runNpmScript(_options).execute('npm run test')).toBe('object');
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on(value, cb) {
+					cb('test\n');
+				},
+			},
+			stderr: {
+				on() {},
+			},
+			on() {},
+			kill() {},
+		}));
+		expect(typeof runNpmScript(_options).execute('npm run test')).toBe('object');
+	});
+	it('dafault fallback onError', () => {
+		const _options = Object.assign({}, options, {
+			onError: undefined,
+		});
+		spawn.mockImplementation(() => ({
+			stdout: {
+				on() {},
+			},
+			stderr: {
+				on(value, cb) {
+					cb('test\n');
+				},
+			},
+			on() {},
+			kill() {},
+		}));
+		expect(typeof runNpmScript(_options).execute('npm run test')).toBe('object');
 	});
 });

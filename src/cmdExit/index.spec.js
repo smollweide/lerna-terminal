@@ -1,26 +1,32 @@
-const dcopy = require('deep-copy');
-const resolve = require('../resolve');
-const { cmdExit } = require('./index');
+/* global jest */
+/* eslint global-require: 0*/
+const cmdExit = require('./index');
+const cmdHelp = require('../cmdHelp');
+const cmdFocus = require('../cmdFocus');
 
-const uiState = {
-	focus: 'utils',
-	help: false,
-};
+jest.mock('../store', () => {
+	return {
+		state: {},
+		uiState: {
+			focus: 'utils',
+			help: false,
+		},
+		provideStore: jest.fn(),
+	};
+});
+const { uiState } = require('../store');
 
 describe('cmdExit', () => {
 	it('uiState.focus should be empty', done => {
-		const _uiState = dcopy(uiState);
-		const _cmdExit = resolve(cmdExit, { uiState: _uiState });
-		_cmdExit(undefined, done);
-		expect(_uiState.focus).toBe('');
-		expect(_uiState.help).toBe(false);
+		cmdExit(undefined, done);
+		expect(uiState.focus).toBe('');
+		expect(uiState.help).toBe(false);
 	});
 	it('uiState.help should be false in case of help mode', done => {
-		const _uiState = dcopy(uiState);
-		_uiState.help = true;
-		const _cmdExit = resolve(cmdExit, { uiState: _uiState });
-		_cmdExit(undefined, done);
-		expect(_uiState.focus).toBe('utils');
-		expect(_uiState.help).toBe(false);
+		cmdFocus('utils', () => {});
+		cmdHelp(undefined, () => {});
+		cmdExit(undefined, done);
+		expect(uiState.focus).toBe('utils');
+		expect(uiState.help).toBe(false);
 	});
 });

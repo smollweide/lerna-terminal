@@ -1,62 +1,91 @@
-const dcopy = require('deep-copy');
-const resolve = require('../resolve');
-const { cmdStart } = require('./index');
+/* global jest, afterEach */
+/* eslint global-require: 0*/
+const cmdStart = require('./index');
+const { isValidStartFunction } = require('./index');
+const cmdFocus = require('../cmdFocus');
 
-const state = {
-	utils: {
-		log: [123],
-		terminal: {},
+jest.mock('../store', () => ({
+	state: {
+		utils: {
+			log: [123],
+			terminal: {
+				start: jest.fn(),
+			},
+		},
+		terminalUtils: {
+			log: [123],
+			terminal: {
+				start: jest.fn(),
+			},
+		},
+		ui: {
+			log: ['started'],
+		},
+		dateTime: {},
 	},
-	terminalUtils: {
-		log: [123],
-		terminal: {},
-	},
-	ui: {
-		log: ['started'],
-	},
-	dateTime: {},
-};
+	uiState: { focus: 'utils' },
+}));
+const { state, uiState } = require('../store');
 
 describe('cmdStart', () => {
-	it('execute without error', () => {
-		const _cmdStart = resolve(cmdStart, { state: {}, uiState: {}, cmdClear() {} });
-		expect(_cmdStart('utils', () => {})).toBe(undefined);
+	it('start defined package', () => {
+		state.utils.terminal.start.mockReturnValueOnce(
+			Object.assign(state.utils.terminal, {
+				'start-defined-package': true,
+			})
+		);
+		cmdStart('utils', () => {});
+		expect(state.utils.terminal['start-defined-package']).toBe(true);
 	});
-	it('start defined package', done => {
-		const _state = dcopy(state);
-		_state.utils.terminal = {
-			start: done,
+	it('try start defined but invalid package', () => {
+		cmdStart('utils2', () => {});
+		expect(state.utils2).toBe(undefined);
+	});
+	it('start focused package', () => {
+		state.utils.terminal.start.mockReturnValueOnce(
+			Object.assign(state.utils.terminal, {
+				'start-focused-package': true,
+			})
+		);
+		cmdStart(undefined, () => {});
+		expect(state.utils.terminal['start-focused-package']).toBe(true);
+	});
+	it('try start focused but invalid package', () => {
+		cmdFocus('utils2', () => {});
+		cmdStart(undefined, () => {});
+		expect(state.utils2).toBe(undefined);
+	});
+	it('start all packages', () => {
+		cmdFocus('all', () => {});
+		expect(uiState.focus).toBe('all');
+		state.utils.terminal.start.mockReturnValueOnce(
+			Object.assign(state.utils.terminal, {
+				'start-all-packages': true,
+			})
+		);
+		state.terminalUtils.terminal.start.mockReturnValueOnce(
+			Object.assign(state.terminalUtils.terminal, {
+				'start-all-packages': true,
+			})
+		);
+		cmdStart(undefined, () => {});
+		expect(state.utils.terminal['start-all-packages']).toBe(true);
+		expect(state.terminalUtils.terminal['start-all-packages']).toBe(true);
+	});
+	describe('isValidStartFunction', () => {
+		const _state = {
+			utils: {
+				terminal: {
+					start() {},
+				},
+			},
+			utils2: {},
 		};
-		const _cmdStart = resolve(cmdStart, { state: _state, uiState: {}, cmdClear() {} });
-		_cmdStart('utils', () => {});
-	});
-	it('start focused package', done => {
-		const _state = dcopy(state);
-		_state.utils.terminal = {
-			start: done,
-		};
-		const _cmdStart = resolve(cmdStart, { state: _state, uiState: { focus: 'utils' }, cmdClear() {} });
-		_cmdStart(undefined, () => {});
-	});
-	it('try to start not existing but focused package', () => {
-		const _state = dcopy(state);
-		const _cmdStart = resolve(cmdStart, { state: _state, uiState: { focus: 'utils2' }, cmdClear() {} });
-		_cmdStart(undefined, () => {});
-	});
-	it('start all package', done => {
-		const _state = dcopy(state);
-		_state.utils.terminal = {
-			start: done,
-		};
-		const _cmdStart = resolve(cmdStart, { state: _state, uiState: {}, cmdClear() {} });
-		_cmdStart(undefined, () => {});
-	});
-	it('start all package 2', done => {
-		const _state = dcopy(state);
-		_state.terminalUtils.terminal = {
-			start: done,
-		};
-		const _cmdStart = resolve(cmdStart, { state: _state, uiState: {}, cmdClear() {} });
-		_cmdStart(undefined, () => {});
+		it('default', () => {
+			expect(isValidStartFunction(_state, 'utils')).toBe(true);
+		});
+		it('unknown package', () => {
+			expect(isValidStartFunction(_state, '')).toBe(false);
+		});
 	});
 });

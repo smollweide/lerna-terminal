@@ -1,5 +1,4 @@
 'use strict';
-const resolve = require('../resolve');
 
 const dimensions = {
 	width: process.stdout.columns,
@@ -8,18 +7,24 @@ const dimensions = {
 
 /**
  * @param {Function<string>} onResize - the callback function
- * @param {Object} di - dependency injection
  * @returns {void}
  **/
-function resizeListener(onResize, { _dimensions, _process }) {
+function resizeListener(onResize) {
 	const check = () => {
-		if (_dimensions.width !== _process.stdout.columns || _dimensions.height !== _process.stdout.rows) {
-			_dimensions.width = _process.stdout.columns;
-			_dimensions.height = _process.stdout.rows;
+		if (dimensions.width !== process.stdout.columns || dimensions.height !== process.stdout.rows) {
+			dimensions.width = process.stdout.columns;
+			dimensions.height = process.stdout.rows;
 			onResize();
 		}
 	};
 	setInterval(check, 500);
 }
 
-module.exports = { dimensions, resizeListener: resolve(resizeListener, { dimensions, process }) };
+/**
+ * @returns {Object} dimensions
+ **/
+function getDimensions() {
+	return dimensions;
+}
+
+module.exports = { dimensions, getDimensions, resizeListener };

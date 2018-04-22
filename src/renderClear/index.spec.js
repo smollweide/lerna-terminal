@@ -1,14 +1,14 @@
-const resolve = require('../resolve');
-const { renderClear } = require('./index');
+/* global jest */
+const renderClear = require('./index');
 
 describe('renderClear', () => {
 	it('default', done => {
-		const _renderClear = resolve(renderClear, {
+		global.console = Object.assign(console, {
 			log(logText) {
 				expect(typeof logText).toBe('string');
 				done();
 			},
 		});
-		_renderClear();
+		renderClear();
 	});
 });

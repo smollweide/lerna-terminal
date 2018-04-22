@@ -1,58 +1,77 @@
-const resolve = require('../resolve');
+const jest = require('jest');
 const handleKillProcess = require('./index');
+const cmdStop = require('../cmdStop');
 
-const _getProcess = cmd => ({
+jest.mock('../cmdStop');
+
+global.process = Object.assign(process, {
 	on(type, cb) {
-		if (type === cmd) {
-			cb();
-		}
+		cb();
 	},
+	exit() {},
 });
 
 describe('handleKillProcess', () => {
-	it('cmdStop on SIGINT', done => {
-		resolve(handleKillProcess, {
-			cmdStop() {
-				done();
-			},
-			process: _getProcess('SIGINT'),
-			exit() {},
-		})();
+	beforeEach(() => {
+		cmdStop.mockClear();
 	});
-	it('cmdStop on SIGTERM', done => {
-		resolve(handleKillProcess, {
-			cmdStop() {
-				done();
+	it('cmdStop on SIGINT', () => {
+		global.process = Object.assign(process, {
+			on(type, cb) {
+				if (type === 'SIGINT') {
+					cb();
+				}
 			},
-			process: _getProcess('SIGTERM'),
 			exit() {},
-		})();
+		});
+		handleKillProcess();
+		expect(cmdStop).toHaveBeenCalledTimes(1);
+	});
+	it('cmdStop on SIGTERM', () => {
+		global.process = Object.assign(process, {
+			on(type, cb) {
+				if (type === 'SIGTERM') {
+					cb();
+				}
+			},
+			exit() {},
+		});
+		handleKillProcess();
+		expect(cmdStop).toHaveBeenCalledTimes(1);
 	});
 
 	it('run process.exit on SIGINT', done => {
-		resolve(handleKillProcess, {
-			cmdStop(packageName, cb) {
-				expect(packageName).toBe(undefined);
-				cb();
+		cmdStop.mockImplementation((packageName, cb) => {
+			expect(packageName).toBe(undefined);
+			cb();
+		});
+		global.process = Object.assign(process, {
+			on(type, cb) {
+				if (type === 'SIGINT') {
+					cb();
+				}
 			},
-			process: Object.assign({}, _getProcess('SIGINT'), {
-				exit() {
-					done();
-				},
-			}),
-		})();
+			exit() {
+				done();
+			},
+		});
+		handleKillProcess();
 	});
 	it('run process.exit on SIGTERM', done => {
-		resolve(handleKillProcess, {
-			cmdStop(packageName, cb) {
-				expect(packageName).toBe(undefined);
-				cb();
+		cmdStop.mockImplementation((packageName, cb) => {
+			expect(packageName).toBe(undefined);
+			cb();
+		});
+		global.process = Object.assign(process, {
+			on(type, cb) {
+				if (type === 'SIGTERM') {
+					cb();
+				}
 			},
-			process: Object.assign({}, _getProcess('SIGTERM'), {
-				exit() {
-					done();
-				},
-			}),
-		})();
+			exit() {
+				done();
+			},
+		});
+		handleKillProcess();
 	});
 });
