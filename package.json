@@ -99,6 +99,7 @@
   "dependencies": {
     "chalk": "2.4.0",
     "commander": "2.15.1",
+    "cross-spawn": "6.0.5",
     "glob": "7.1.2",
     "string-length": "2.0.0"
   },

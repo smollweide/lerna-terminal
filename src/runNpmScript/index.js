@@ -2,7 +2,7 @@
 /* eslint complexity: 0*/
 /* eslint no-empty: 0*/
 'use strict';
-const { spawn } = require('child_process');
+const spawn = require('cross-spawn');
 
 /**
  * @description run the given script in childProcess

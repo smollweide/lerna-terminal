@@ -1,8 +1,8 @@
 /* global jest */
-const { spawn } = require('child_process');
+const spawn = require('cross-spawn');
 const runNpmScript = require('./index');
 
-jest.mock('child_process');
+jest.mock('cross-spawn');
 
 const options = {
 	scriptName: 'utils',
