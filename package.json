@@ -24,7 +24,7 @@
   "homepage": "https://github.com/smollweide/lerna-terminal#readme",
   "bin": "dist/index.js",
   "engines": {
-    "node": ">=6.0.0",
+    "node": ">=8.0.0",
     "npm": ">=3.0.0"
   },
   "files": [
@@ -103,7 +103,7 @@
     "string-length": "2.0.0"
   },
   "scripts": {
-    "c": "git add . && git-cz",
+    "c": "git-cz",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "precommit": "lint-staged && npm-run-all lint test check-coverage",
     "prebuild": "rimraf dist",

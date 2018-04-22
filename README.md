@@ -4,13 +4,17 @@
 
 ![kapture 2017-11-02 at 17 25 41](https://user-images.githubusercontent.com/2912007/32337702-08be4f34-bff3-11e7-808b-54c9bd09a0c9.gif)
 
-## Install
+## Getting Started
+
+This application requires Node `8` or higher.
+
+### Install
 
 ```
 $ npm install lerna-terminal
 ```
 
-## Usage
+### Usage
 
 ```
 $ lerna-terminal --help
@@ -54,7 +58,7 @@ lerna-terminal~$ help
     lerna-terminal~$ start
 ```
 
-## CLI in child process (focused)
+### CLI in child process (focused)
 
 ```
 lerna-terminal/<packageName>~$ help
