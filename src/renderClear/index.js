@@ -7,7 +7,7 @@
  **/
 function renderClear() {
 	// clear console
-	console.log('\x1Bc');
+	process.stdout.write('\x1Bc');
 }
 
 module.exports = renderClear;
