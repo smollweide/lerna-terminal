@@ -1,7 +1,5 @@
 /* eslint no-console: 0*/
 'use strict';
-const renderCmdPrefix = require('../renderCmdPrefix');
-const renderClear = require('../renderClear');
 const { getState, getUiState } = require('../store');
 const { getTerminal } = require('../getTerminalPanel');
 const { getDimensions } = require('../getDimensions');
@@ -20,9 +18,7 @@ function renderFocus() {
 	const currentState = Object.assign({}, state);
 
 	if (currentState[uiState.focus]) {
-		renderClear();
-		console.log(getTerminal(panelWidth, panelHeight, uiState.focus, currentState[uiState.focus].log).join(''));
-		renderCmdPrefix();
+		uiState.print(getTerminal(panelWidth, panelHeight, uiState.focus, currentState[uiState.focus].log).join(''));
 		return;
 	}
 

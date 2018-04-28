@@ -1,7 +1,6 @@
 /* eslint no-console: 0*/
 'use strict';
 const chalk = require('chalk');
-const renderClear = require('../renderClear');
 const { getUiState } = require('../store');
 const { getBox } = require('../getTerminalPanel');
 const { getDimensions } = require('../getDimensions');
@@ -13,7 +12,6 @@ const { getDimensions } = require('../getDimensions');
  * @returns {void}
  **/
 function renderNotification(render) {
-	renderClear();
 	const uiState = getUiState();
 	const dimensions = getDimensions();
 	const { type = 'info', message, delay = 2000 } = uiState.notifications[0];
@@ -42,7 +40,7 @@ function renderNotification(render) {
 			msg = message;
 			break;
 	}
-	console.log(getBox(type, [msg], dimensions.width));
+	uiState.print(getBox(type, [msg], dimensions.width));
 	setTimeout(() => {
 		const notifications = uiState.notifications.slice(1, uiState.notifications.length - 1);
 		uiState.notifications = notifications;

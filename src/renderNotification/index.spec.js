@@ -1,28 +1,24 @@
 /* global jest */
 const renderNotification = require('./index');
-const renderClear = require('../renderClear');
 const { getUiState } = require('../store');
 const { getBox } = require('../getTerminalPanel');
 const { getDimensions } = require('../getDimensions');
 
-jest.mock('../renderClear');
 jest.mock('../store');
 jest.mock('../getTerminalPanel');
 jest.mock('../getDimensions');
 
 describe('renderNotification', () => {
 	beforeEach(() => {
-		renderClear.mockClear();
 		getUiState.mockClear();
 		getBox.mockClear();
 		getDimensions.mockClear();
 	});
 	it('error', done => {
-		global.console.log = logText => {
-			expect(typeof logText).toBe('string');
-		};
-		renderClear.mockImplementation(() => {});
 		getUiState.mockImplementation(() => ({
+			print(logText) {
+				expect(typeof logText).toBe('string');
+			},
 			notifications: [
 				{
 					type: 'error',
@@ -40,11 +36,10 @@ describe('renderNotification', () => {
 		});
 	});
 	it('warning', done => {
-		global.console.log = logText => {
-			expect(typeof logText).toBe('string');
-		};
-		renderClear.mockImplementation(() => {});
 		getUiState.mockImplementation(() => ({
+			print(logText) {
+				expect(typeof logText).toBe('string');
+			},
 			notifications: [
 				{
 					type: 'warning',
@@ -62,11 +57,10 @@ describe('renderNotification', () => {
 		});
 	});
 	it('success', done => {
-		global.console.log = logText => {
-			expect(typeof logText).toBe('string');
-		};
-		renderClear.mockImplementation(() => {});
 		getUiState.mockImplementation(() => ({
+			print(logText) {
+				expect(typeof logText).toBe('string');
+			},
 			notifications: [
 				{
 					type: 'success',
@@ -84,11 +78,10 @@ describe('renderNotification', () => {
 		});
 	});
 	it('default', done => {
-		global.console.log = logText => {
-			expect(typeof logText).toBe('string');
-		};
-		renderClear.mockImplementation(() => {});
 		getUiState.mockImplementation(() => ({
+			print(logText) {
+				expect(typeof logText).toBe('string');
+			},
 			notifications: [
 				{
 					type: 'default',
@@ -106,11 +99,10 @@ describe('renderNotification', () => {
 		});
 	});
 	it('fallback', done => {
-		global.console.log = logText => {
-			expect(typeof logText).toBe('string');
-		};
-		renderClear.mockImplementation(() => {});
 		getUiState.mockImplementation(() => ({
+			print(logText) {
+				expect(typeof logText).toBe('string');
+			},
 			notifications: [
 				{
 					message: 'message',

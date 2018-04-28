@@ -1,8 +1,12 @@
 /* global jest, afterEach */
 /* eslint global-require: 0*/
 const commandListener = require('./index');
+const { getUiState } = require('../store');
+
+jest.mock('../store');
 
 const _process = {
+	env: global.process.env,
 	stdin: {
 		setEncoding: jest.fn(),
 		setRawMode: jest.fn(),
@@ -17,103 +21,209 @@ const _process = {
 	},
 };
 
-const addString = inValue => {
-	global.process = Object.assign(_process, {
-		stdin: Object.assign(_process.stdin, {
-			on: (value, cb) => {
-				cb(inValue);
-			},
-		}),
-	});
-};
+const addString = inValue => [inValue];
+
+const addReturn = () => [
+	'',
+	{
+		ctrl: false,
+		name: 'return',
+	},
+];
+
+const addCtrlC = () => [
+	'c',
+	{
+		ctrl: true,
+		name: 'c',
+	},
+];
+
+const addBackspace = () => [
+	'',
+	{
+		ctrl: false,
+		name: 'backspace',
+	},
+];
+
+const addUp = () => [
+	'',
+	{
+		name: 'up',
+	},
+];
+const addDown = () => [
+	'',
+	{
+		name: 'down',
+	},
+];
 
 describe('commandListener', () => {
+	beforeEach(() => {
+		getUiState.mockClear();
+	});
 	it('write result in buffer', done => {
-		addString('test');
+		getUiState.mockImplementation(() => ({
+			onChange(value) {
+				expect(value).toBe('test');
+			},
+		}));
 		global.process = Object.assign(_process, {
-			stdout: Object.assign(_process.stdout, {
-				write: value => {
-					if (value !== '') {
-						expect(value).toBe('test');
-						done();
-					}
+			stdin: Object.assign(_process.stdin, {
+				on: (value, cb) => {
+					cb(...addString('test'));
+					done();
 				},
 			}),
 		});
 		expect(commandListener(() => {})).toBe(undefined);
 	});
 	it('send command by press enter', done => {
+		getUiState.mockImplementation(() => ({
+			onChange(value) {
+				expect(value).toBe('');
+			},
+		}));
 		global.process = Object.assign(_process, {
 			stdin: Object.assign(_process.stdin, {
 				on: (value, cb) => {
-					expect(value).toBe('keypress');
-					cb('', {
-						ctrl: false,
-						name: 'return',
-					});
+					cb(...addReturn());
+					done();
 				},
 			}),
 		});
-		expect(
-			commandListener(value => {
-				expect(value).toBe('test');
-				done();
-			})
-		).toBe(undefined);
+		commandListener(value => {
+			expect(value).toBe('test');
+			done();
+		});
 	});
 	it('press enter but without anything entered', () => {
+		getUiState.mockImplementation(() => ({
+			onChange() {},
+		}));
 		expect(commandListener(() => {})).toBe(undefined);
 	});
 	it('press ctrl c', done => {
-		addString('test');
+		getUiState.mockImplementation(() => ({
+			onChange() {},
+		}));
 		global.process = Object.assign(_process, {
 			stdin: Object.assign(_process.stdin, {
 				on: (value, cb) => {
-					expect(value).toBe('keypress');
-					cb('c', {
-						ctrl: true,
-						name: 'c',
-					});
+					cb(...addString('test'));
+					cb(...addCtrlC());
 				},
 			}),
-		});
-		global.process = Object.assign(_process, {
 			exit: () => {
 				done();
 			},
 		});
 		expect(commandListener(() => {})).toBe(undefined);
 	});
-	it('write result in buffer', () => {
-		addString('test');
-		expect(commandListener(() => {})).toBe(undefined);
-	});
 	it('press backspace', done => {
-		addString('test');
+		let counter = 0;
+		getUiState.mockImplementation(() => ({
+			onChange(value) {
+				counter += 1;
+				if (counter === 2) {
+					expect(value).toBe('tes');
+				}
+			},
+		}));
 		global.process = Object.assign(_process, {
 			stdin: Object.assign(_process.stdin, {
 				on: (value, cb) => {
-					cb('', {
-						ctrl: false,
-						name: 'backspace',
-					});
-				},
-			}),
-		});
-		global.process = Object.assign(_process, {
-			stdout: Object.assign(_process.stdout, {
-				write: value => {
-					if (value[0] === 't') {
-						expect(value).toBe('tes');
-						done();
-					}
+					cb(...addString('test'));
+					cb(...addBackspace());
+					done();
 				},
 			}),
 		});
 		expect(commandListener(() => {})).toBe(undefined);
 	});
 	it('press undefined key', () => {
-		addString(undefined);
+		getUiState.mockImplementation(() => ({
+			onChange() {},
+		}));
+		global.process = Object.assign(_process, {
+			stdin: Object.assign(_process.stdin, {
+				on: (value, cb) => {
+					cb(...addString(undefined));
+				},
+			}),
+		});
+		expect(commandListener(() => {})).toBe(undefined);
+	});
+	it('go history up', done => {
+		let counter = 0;
+		const test = [
+			{ cmd: addReturn(), expected: '' },
+			{ cmd: addString('test'), expected: 'test' },
+			{ cmd: addReturn(), expected: '' },
+			{ cmd: addUp(), expected: 'test' },
+			{ cmd: addString('2'), expected: 'test2' },
+			{ cmd: addReturn(), expected: '' },
+			// history = [ 'test2', 'test', 'tes', 'test' ]
+			{ cmd: addUp(), expected: 'test2' },
+			{ cmd: addUp(), expected: 'test' },
+			{ cmd: addUp(), expected: 'tes' },
+			{ cmd: addUp(), expected: 'test' },
+			{ cmd: addUp(), expected: '' },
+			{ cmd: addUp(), expected: 'test2' },
+			{ cmd: addUp(), expected: 'test' },
+		];
+		getUiState.mockImplementation(() => ({
+			onChange(value) {
+				expect(value).toBe(test[counter].expected);
+				if (counter >= test.length - 1) {
+					done();
+				}
+				counter += 1;
+			},
+		}));
+		global.process = Object.assign(_process, {
+			stdin: Object.assign(_process.stdin, {
+				on: (value, cb) => {
+					test.forEach(({ cmd }) => {
+						cb(...cmd);
+					});
+				},
+			}),
+		});
+		expect(commandListener(() => {})).toBe(undefined);
+	});
+	it('go history down', done => {
+		let counter = 0;
+		const test = [
+			{ cmd: addUp(), expected: 'tes' },
+			{ cmd: addUp(), expected: 'test' },
+			{ cmd: addDown(), expected: 'tes' },
+			{ cmd: addDown(), expected: 'test' },
+			{ cmd: addDown(), expected: 'test2' },
+			{ cmd: addDown(), expected: '' },
+			{ cmd: addDown(), expected: '' },
+			{ cmd: addDown(), expected: '' },
+		];
+		getUiState.mockImplementation(() => ({
+			onChange(value) {
+				expect(value).toBe(test[counter].expected);
+				if (counter >= test.length - 1) {
+					done();
+				}
+				counter += 1;
+			},
+		}));
+		global.process = Object.assign(_process, {
+			stdin: Object.assign(_process.stdin, {
+				on: (value, cb) => {
+					test.forEach(({ cmd }) => {
+						cb(...cmd);
+					});
+				},
+			}),
+		});
 		expect(commandListener(() => {})).toBe(undefined);
 	});
 });

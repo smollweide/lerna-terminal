@@ -1,34 +1,33 @@
 /* eslint no-console: 0*/
 'use strict';
 const chalk = require('chalk');
-const renderCmdPrefix = require('../renderCmdPrefix');
-const renderClear = require('../renderClear');
+const { getUiState } = require('../store');
 
 /**
  * @returns {void}
  **/
 function renderHelp() {
-	renderClear();
-	console.log('');
-	console.log(chalk.bold('Help'));
-	console.log();
-	console.log(`  ${chalk.bold('Usage')}`);
-	console.log(`    lerna-terminal~$ [command]`);
-	console.log();
-	console.log(`  ${chalk.bold('Commands')}`);
-	console.log(`    [string]          Focus one terminal panel and update current pwd`);
-	console.log(`    focus             Leave focused mode (child process) and displays all terminal panels`);
-	console.log(`    focus [string]    Focus one terminal panel and update current pwd`);
-	console.log(`    clear             Clear all terminal panels`);
-	console.log(`    clear [string]    Clear one terminal panel`);
-	console.log(`    start             Start (or restart) the npm script (see Usage) in all terminal panels`);
-	console.log(`    start [string]    Start (or restart) the npm script (see Usage) in one terminal panels`);
-	console.log(`    stop              Stops the npm script (see Usage) in all terminal panels`);
-	console.log(`    stop [string]     Stops the npm script (see Usage) in one terminal panels`);
-	console.log(`    exit              Leave current child process and displays all terminal panels`);
-	console.log();
-	console.log();
-	renderCmdPrefix();
+	const out = [];
+	out.join('');
+	out.join(chalk.bold('Help'));
+	out.join();
+	out.join(`  ${chalk.bold('Usage')}`);
+	out.join(`    lerna-terminal~$ [command]`);
+	out.join();
+	out.join(`  ${chalk.bold('Commands')}`);
+	out.join(`    [string]          Focus one terminal panel and update current pwd`);
+	out.join(`    focus             Leave focused mode (child process) and displays all terminal panels`);
+	out.join(`    focus [string]    Focus one terminal panel and update current pwd`);
+	out.join(`    clear             Clear all terminal panels`);
+	out.join(`    clear [string]    Clear one terminal panel`);
+	out.join(`    start             Start (or restart) the npm script (see Usage) in all terminal panels`);
+	out.join(`    start [string]    Start (or restart) the npm script (see Usage) in one terminal panels`);
+	out.join(`    stop              Stops the npm script (see Usage) in all terminal panels`);
+	out.join(`    stop [string]     Stops the npm script (see Usage) in one terminal panels`);
+	out.join(`    exit              Leave current child process and displays all terminal panels`);
+	out.join();
+	out.join();
+	getUiState().print(out.join('\n'));
 }
 
 module.exports = renderHelp;

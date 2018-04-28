@@ -1,9 +1,7 @@
 /* eslint no-console: 0*/
 'use strict';
-const renderCmdPrefix = require('../renderCmdPrefix');
-const renderClear = require('../renderClear');
 const getFilledArray = require('../getFilledArray');
-const { getState } = require('../store');
+const { getState, getUiState } = require('../store');
 const { getTerminalPanel } = require('../getTerminalPanel');
 const mergePanelsRow = require('../mergePanelsRow');
 const { getDimensions } = require('../getDimensions');
@@ -42,8 +40,6 @@ function renderAllPanels() {
 	const renderArrInner = getFilledArray(columns, '');
 	const renderArr = getFilledArray(rows, renderArrInner);
 
-	renderClear();
-
 	// map panel into row structure
 	let counterColumn = 0;
 	let counterRow = 0;
@@ -65,11 +61,7 @@ function renderAllPanels() {
 			counterRow += 1;
 		}
 	});
-
-	renderArr.forEach(panelRow => {
-		console.log(mergePanelsRow(panelRow, panelHeight).join('\n'));
-	});
-	renderCmdPrefix();
+	getUiState().print(`${renderArr.map(panelRow => mergePanelsRow(panelRow, panelHeight).join('\n')).join('')}\n`);
 }
 
 module.exports = renderAllPanels;

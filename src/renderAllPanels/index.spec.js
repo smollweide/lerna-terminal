@@ -1,13 +1,9 @@
 /* global jest */
 const renderAllPanels = require('./index');
 const { getColumnsAndRows } = require('./index');
-const renderCmdPrefix = require('../renderCmdPrefix');
-const renderClear = require('../renderClear');
-const { getState } = require('../store');
+const { getState, getUiState } = require('../store');
 const { getDimensions } = require('../getDimensions');
 
-jest.mock('../renderCmdPrefix');
-jest.mock('../renderClear');
 jest.mock('../store');
 jest.mock('../getDimensions');
 
@@ -46,17 +42,15 @@ getDimensions.mockImplementation(() => ({
 	width: 120,
 	height: 20,
 }));
-renderClear.mockImplementation(() => {});
-renderCmdPrefix.mockImplementation(() => {});
 
 describe('renderAllPanels', () => {
 	it('default', done => {
-		global.console = Object.assign(global.console, {
-			log(logText) {
+		getUiState.mockImplementation(() => ({
+			print(logText) {
 				expect(typeof logText).toBe('string');
 				done();
 			},
-		});
+		}));
 		expect(renderAllPanels()).toBe(undefined);
 	});
 });
