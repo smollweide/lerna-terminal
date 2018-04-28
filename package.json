@@ -54,6 +54,7 @@
       "src/*.{js}",
       "src/*/*.{js}",
       "!src/index.js",
+      "!src/log.js",
       "!src/resolve/index.js",
       "!src/resolve/resolve-dependency.js"
     ]

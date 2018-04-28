@@ -72,6 +72,9 @@ const onReturn = onCommandEntered => {
 };
 
 const onRecieveLetter = letter => {
+	if (!letter) {
+		return;
+	}
 	buffer += letter;
 	getUiState().onChange(buffer);
 };
@@ -102,11 +105,13 @@ function commandListener(onCommandEntered) {
 				return;
 			}
 
+			/* istanbul ignore else case */
 			if (keyNameMap[key.name]) {
 				keyNameMap[key.name](onCommandEntered);
 				return;
 			}
 		}
+		onRecieveLetter(letter);
 	});
 	process.stdin.resume();
 }

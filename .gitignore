@@ -17,3 +17,4 @@ lerna-terminal-0.0.0-semantically-released.tgz
 .vscode
 
 npm-debug.log*
+log.txt
