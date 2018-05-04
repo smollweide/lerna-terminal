@@ -2,8 +2,23 @@
 /* eslint global-require: 0*/
 const commandListener = require('./index');
 const { getUiState } = require('../store');
+const getLernaPackages = require('../getLernaPackages');
+const { getProgram } = require('../commander');
+const getPackage = require('../getPackage');
 
 jest.mock('../store');
+jest.mock('../getLernaPackages');
+jest.mock('../commander');
+jest.mock('../getPackage');
+
+getLernaPackages.mockImplementation(onMatch => {
+	onMatch('path/a-package');
+	onMatch('path/b-package');
+	onMatch('path/s-package');
+});
+getProgram.mockImplementation(() => ({
+	script: 'start',
+}));
 
 const _process = {
 	env: global.process.env,
@@ -47,6 +62,14 @@ const addBackspace = () => [
 	},
 ];
 
+const addTab = () => [
+	'',
+	{
+		ctrl: false,
+		name: 'tab',
+	},
+];
+
 const addUp = () => [
 	'',
 	{
@@ -63,6 +86,7 @@ const addDown = () => [
 describe('commandListener', () => {
 	beforeEach(() => {
 		getUiState.mockClear();
+		getPackage.mockClear();
 	});
 	it('write result in buffer', done => {
 		getUiState.mockImplementation(() => ({
@@ -221,6 +245,89 @@ describe('commandListener', () => {
 					test.forEach(({ cmd }) => {
 						cb(...cmd);
 					});
+				},
+			}),
+		});
+		expect(commandListener(() => {})).toBe(undefined);
+	});
+	it('press tab - with a', done => {
+		let counter = 0;
+		getPackage.mockImplementation(() => ({
+			scripts: {
+				start: 'something',
+			},
+		}));
+		getUiState.mockImplementation(() => ({
+			onChange(value) {
+				counter += 1;
+				if (counter === 3) {
+					expect(value).toBe('a-package');
+				}
+			},
+		}));
+		global.process = Object.assign(_process, {
+			stdin: Object.assign(_process.stdin, {
+				on: (value, cb) => {
+					cb(...addReturn());
+					cb(...addString('a'));
+					cb(...addTab());
+					done();
+				},
+			}),
+		});
+		expect(commandListener(() => {})).toBe(undefined);
+	});
+	it('press tab - invalid package data', done => {
+		let counter = 0;
+		getPackage.mockImplementation(() => ({
+			scripts: {},
+		}));
+		getUiState.mockImplementation(() => ({
+			onChange(value) {
+				counter += 1;
+				if (counter === 3) {
+					expect(value).toBe('a');
+				}
+			},
+		}));
+		global.process = Object.assign(_process, {
+			stdin: Object.assign(_process.stdin, {
+				on: (value, cb) => {
+					cb(...addReturn());
+					cb(...addString('a'));
+					cb(...addTab());
+					done();
+				},
+			}),
+		});
+		expect(commandListener(() => {})).toBe(undefined);
+	});
+	it('press tab - multiple commands available', done => {
+		let counter = 0;
+		getPackage.mockImplementation(() => ({
+			scripts: {
+				start: 'something',
+			},
+		}));
+		getUiState.mockImplementation(() => ({
+			onChange(value) {
+				counter += 1;
+				if (counter === 3) {
+					expect(value.search('start, stop, s-package') >= 0).toBe(true);
+				}
+				// reset after 1500 ms
+				if (counter === 4) {
+					expect(value).toBe('s');
+					done();
+				}
+			},
+		}));
+		global.process = Object.assign(_process, {
+			stdin: Object.assign(_process.stdin, {
+				on: (value, cb) => {
+					cb(...addReturn());
+					cb(...addString('s'));
+					cb(...addTab());
 				},
 			}),
 		});

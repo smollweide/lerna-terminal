@@ -89,3 +89,4 @@ function executeCmd(cmd) {
 }
 
 module.exports = executeCmd;
+module.exports.COMMANDS = COMMANDS;

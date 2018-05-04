@@ -1,6 +1,12 @@
 'use strict';
+const path = require('path');
 const keypress = require('keypress');
+const chalk = require('chalk');
 const { getUiState } = require('../store');
+const getLernaPackages = require('../getLernaPackages');
+const { getProgram } = require('../commander');
+const getPackage = require('../getPackage');
+const { COMMANDS } = require('../executeCmd');
 
 keypress(process.stdin);
 
@@ -71,6 +77,39 @@ const onReturn = onCommandEntered => {
 	getUiState().onChange('');
 };
 
+const onTab = () => {
+	const availablePackages = Object.values(COMMANDS);
+
+	getLernaPackages(packagePath => {
+		// eslint-disable-next-line
+		const packageData = getPackage(path.join(packagePath, 'package.json'));
+		if (packageData && packageData.scripts && packageData.scripts[getProgram().script]) {
+			availablePackages.push(path.basename(packagePath));
+		}
+	});
+
+	const filteredPackages = availablePackages.filter(
+		availablePackage => new RegExp(`^${buffer}`).exec(availablePackage) !== null
+	);
+
+	if (filteredPackages.length === 1) {
+		buffer = filteredPackages[0];
+		getUiState().onChange(filteredPackages[0]);
+		return;
+	}
+
+	if (filteredPackages.length > 1) {
+		const originalBuffer = buffer;
+		buffer = `commands: ${chalk.blue(filteredPackages.join(', '))}`;
+		getUiState().onChange(`commands: ${chalk.blue(filteredPackages.join(', '))}`);
+
+		setTimeout(() => {
+			buffer = originalBuffer;
+			getUiState().onChange(originalBuffer);
+		}, 1500);
+	}
+};
+
 const onRecieveLetter = letter => {
 	if (!letter) {
 		return;
@@ -84,6 +123,7 @@ const keyNameMap = {
 	up: onUp,
 	down: onDown,
 	return: onReturn,
+	tab: onTab,
 };
 
 /**
