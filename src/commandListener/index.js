@@ -82,7 +82,7 @@ const onTab = () => {
 
 	getLernaPackages(packagePath => {
 		// eslint-disable-next-line
-		const packageData = getPackage(path.join(packagePath, 'package.json'));
+		const packageData = getPackage(packagePath);
 		if (packageData && packageData.scripts && packageData.scripts[getProgram().script]) {
 			availablePackages.push(path.basename(packagePath));
 		}

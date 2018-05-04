@@ -22,9 +22,7 @@ function runNpmScript({ scriptName, packagePath, onExit = () => {}, onRecieve = 
 		const childProcessObj = { isRunning: true };
 
 		const childProcess = spawn(cmdArr[0], cmdArr.slice(1, cmdArr.length), {
-			shell: true,
 			cwd: packagePath,
-			detached: true,
 		});
 
 		childProcess.stdout.on('data', data => {
