@@ -1,8 +1,6 @@
 /* eslint no-console: 0*/
 'use strict';
 const { getState, getUiState } = require('../store');
-const { getTerminal } = require('../getTerminalPanel');
-const { getDimensions } = require('../getDimensions');
 const renderAllPanels = require('../renderAllPanels');
 
 /**
@@ -12,13 +10,10 @@ const renderAllPanels = require('../renderAllPanels');
 function renderFocus() {
 	const state = getState();
 	const uiState = getUiState();
-	const dimensions = getDimensions();
-	const panelWidth = parseInt(dimensions.width, 10);
-	const panelHeight = parseInt(dimensions.height, 10) - 1;
 	const currentState = Object.assign({}, state);
 
 	if (currentState[uiState.focus]) {
-		uiState.print(getTerminal(panelWidth, panelHeight, uiState.focus, currentState[uiState.focus].log).join(''));
+		uiState.print(`${currentState[uiState.focus].log.join('\n')}\n\n`);
 		return;
 	}
 
