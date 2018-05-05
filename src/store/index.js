@@ -1,8 +1,18 @@
 'use strict';
 /* eslint require-jsdoc: 0*/
+const debounce = require('lodash.debounce');
 const { program } = require('../commander');
 
 const cmdPrefix = cmd => `lerna-terminal${cmd ? `/${cmd}` : ''}~$ `;
+
+const print = debounce((value, stdin) => {
+	/* istanbul ignore next */
+	if (process.env.NODE_ENV !== 'ci' && process.env.NODE_ENV !== 'test') {
+		process.stdout.write('\x1Bc');
+	}
+	process.stdout.write(value);
+	process.stdout.write(stdin);
+}, 17);
 
 const state = {};
 const uiState = {
@@ -20,12 +30,8 @@ const uiState = {
 			this.prefix = cmdPrefix('');
 		}
 		this.buffer = value;
-		/* istanbul ignore next */
-		if (process.env.NODE_ENV !== 'ci' && process.env.NODE_ENV !== 'test') {
-			process.stdout.write('\x1Bc');
-		}
-		process.stdout.write(value);
-		process.stdout.write(this.prefix + this.entered);
+
+		print(value, this.prefix + this.entered);
 	},
 	clearBuffer() {
 		this.buffer = '';
