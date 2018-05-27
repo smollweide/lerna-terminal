@@ -11,6 +11,11 @@ const { getProgram } = require('../commander');
 const { getState } = require('../store');
 const render = require('../render');
 
+const parseText = (text) => {
+	// eslint-disable-next-line
+	return text.replace(new RegExp('\x1Bc', 'g'), '').split('\n');
+};
+
 /**
  * @returns {Object} state
  **/
@@ -36,11 +41,17 @@ function runNpmScripts() {
 			scriptName: program.script,
 			packagePath,
 			onRecieve(text) {
-				state[packageName].log = state[packageName].log.concat(getText(text.split('\n'), 'msg'));
+				if (text.search('\x1Bc') >= 0) {
+					state[packageName].log = [];
+				}
+				state[packageName].log = state[packageName].log.concat(getText(parseText(text), 'msg'));
 				render();
 			},
 			onError(text) {
-				state[packageName].log = state[packageName].log.concat(getText(text.split('\n'), 'error'));
+				if (text.search('\x1Bc') >= 0) {
+					state[packageName].log = [];
+				}
+				state[packageName].log = state[packageName].log.concat(getText(parseText(text), 'error'));
 				render();
 			},
 			onExit() {
