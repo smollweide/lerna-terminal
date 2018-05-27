@@ -2,7 +2,7 @@
 const path = require('path');
 const keypress = require('keypress');
 const chalk = require('chalk');
-const { getUiState } = require('../store');
+const { getUiState, getState } = require('../store');
 const getLernaPackages = require('../getLernaPackages');
 const { getProgram } = require('../commander');
 const getPackage = require('../getPackage');
@@ -16,6 +16,11 @@ let currentSelectedHistory = 0;
 
 const onCtrlC = () => {
 	buffer = '';
+	const state = getState();
+	Object.keys(state).forEach(terminalId => {
+		// stop all child processes
+		state[terminalId].terminal.stop();
+	});
 	process.exit();
 };
 

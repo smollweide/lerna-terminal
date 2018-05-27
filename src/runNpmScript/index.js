@@ -12,7 +12,6 @@ const spawn = require('cross-spawn');
  * @param {Function} options.onExit - callback which will be fired if childProcess was killed
  * @param {Function} options.onRecieve - callback which will be fired if childProcess recieved an message
  * @param {Function} options.onError - callback which will be fired if childProcess recieved an error message
- * @param {Function} options.onError - callback which will be fired if childProcess recieved an error message
  * @returns {Object} returns an object including an start and stop method
  **/
 function runNpmScript({ scriptName, packagePath, onExit = () => {}, onRecieve = () => {}, onError = () => {} }) {
@@ -39,9 +38,12 @@ function runNpmScript({ scriptName, packagePath, onExit = () => {}, onRecieve = 
 		return Object.assign(childProcessObj, {
 			stop() {
 				childProcessObj.isRunning = false;
+				/* istanbul ignore next */
 				try {
-					process.kill(-childProcess.pid);
-				} catch (err) {}
+					process.kill(childProcess.pid, 'SIGINT');
+				} catch (err) {
+					console.error(`process.kill(SIGINT): ${err}`);
+				}
 			},
 			start() {
 				this.stop();

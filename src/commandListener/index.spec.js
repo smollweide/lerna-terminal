@@ -1,7 +1,7 @@
 /* global jest, afterEach */
 /* eslint global-require: 0*/
 const commandListener = require('./index');
-const { getUiState } = require('../store');
+const { getUiState, getState } = require('../store');
 const getLernaPackages = require('../getLernaPackages');
 const { getProgram } = require('../commander');
 const getPackage = require('../getPackage');
@@ -132,6 +132,14 @@ describe('commandListener', () => {
 	it('press ctrl c', done => {
 		getUiState.mockImplementation(() => ({
 			onChange() {},
+		}));
+		getState.mockImplementation(() => ({
+			packageA: {
+				terminal: {
+					stop() {}
+				},
+				log: []
+			}
 		}));
 		global.process = Object.assign(_process, {
 			stdin: Object.assign(_process.stdin, {
