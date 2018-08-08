@@ -136,10 +136,10 @@ describe('commandListener', () => {
 		getState.mockImplementation(() => ({
 			packageA: {
 				terminal: {
-					stop() {}
+					stop() {},
 				},
-				log: []
-			}
+				log: [],
+			},
 		}));
 		global.process = Object.assign(_process, {
 			stdin: Object.assign(_process.stdin, {

@@ -44,7 +44,7 @@ describe('getScriptCommands', () => {
 						scripts: {
 							start: 'npm run something',
 						},
-					}
+				  }
 				: {};
 		});
 		getProgram.mockImplementation(() => ({

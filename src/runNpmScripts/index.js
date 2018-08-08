@@ -11,7 +11,7 @@ const { getProgram } = require('../commander');
 const { getState } = require('../store');
 const render = require('../render');
 
-const parseText = (text) => {
+const parseText = text => {
 	// eslint-disable-next-line
 	return text.replace(new RegExp('\x1Bc', 'g'), '').split('\n');
 };
