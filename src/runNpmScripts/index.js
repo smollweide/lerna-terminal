@@ -17,19 +17,20 @@ const parseText = text => {
 };
 
 /**
+ * @param {string} scriptName - npm script name
  * @returns {Object} state
  **/
-function runNpmScripts() {
+function runNpmScripts(scriptName) {
 	const commands = getScriptCommands();
 	const program = getProgram();
 	const state = getState();
 
-	if (!commands[program.script]) {
+	if (!commands[scriptName]) {
 		throw new Error("the given script wasn't found!");
 	}
 
-	Object.keys(commands[program.script]).forEach(index => {
-		const packagePath = commands[program.script][index];
+	Object.keys(commands[scriptName]).forEach(index => {
+		const packagePath = commands[scriptName][index];
 		const packageName = path.basename(packagePath);
 		if (isIgnoredPackage(packagePath, program.ignoredPackages)) {
 			return;
@@ -38,7 +39,7 @@ function runNpmScripts() {
 			log: [],
 		};
 		state[packageName].terminal = runNpmScript({
-			scriptName: program.script,
+			scriptName,
 			packagePath,
 			onRecieve(text) {
 				if (text.search('\x1Bc') >= 0) {

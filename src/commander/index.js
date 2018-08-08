@@ -8,9 +8,9 @@ const packageData = require('../../package.json');
 function runCommander() {
 	program
 		.version(packageData.version)
-		.arguments('<scriptName>')
-		.action(scriptName => {
-			program.script = scriptName;
+		.arguments('<scriptNames>')
+		.action(scriptNames => {
+			program.scripts = scriptNames.split(',');
 		})
 		.option('-i, --ignoredPackages [string]', 'Add packages which should be ignored')
 		.option('-f, --focus [string]', 'Focus one subterminal initially')
@@ -19,7 +19,7 @@ function runCommander() {
 		.parse(process.argv);
 
 	/* istanbul ignore next */
-	if (!program.script) {
+	if (!program.scripts || !Array.isArray(program.scripts) || program.scripts.length < 1) {
 		throw new Error('--script is required');
 	}
 }
