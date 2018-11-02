@@ -1,6 +1,6 @@
 # lerna-terminal [![build status](https://img.shields.io/travis/smollweide/lerna-terminal/master.svg)](https://travis-ci.org/smollweide/lerna-terminal)
 
-> Powerful cli ui for lerna - replace `lerna run <scriptName>` with `lerna-terminal <scriptNames>`.
+> Powerful cli ui for lerna - replace `lerna run <scriptName>` with `lerna-terminal <scriptName>`.
 
 ![kapture 2017-11-02 at 17 25 41](https://user-images.githubusercontent.com/2912007/32337702-08be4f34-bff3-11e7-808b-54c9bd09a0c9.gif)
 
@@ -20,7 +20,7 @@ $ npm install lerna-terminal
 $ lerna-terminal --help
 
   Usage
-    $ lerna-terminal <scriptNames> [options]
+    $ lerna-terminal <scriptName> [options]
 
   Options
     -V, --version                   Output the version number

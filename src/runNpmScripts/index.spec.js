@@ -34,7 +34,7 @@ describe('runNpmScripts', () => {
 		getScriptCommands.mockImplementation(() => ({}));
 		getProgram.mockImplementation(() => ({ script: 'start' }));
 		expect(() => {
-			runNpmScripts('start');
+			runNpmScripts();
 		}).toThrow();
 	});
 	it('packages ignored', () => {
@@ -42,7 +42,7 @@ describe('runNpmScripts', () => {
 		getScriptCommands.mockImplementation(() => ({ start: ['/path/to/package/utils', '/path/to/package/ui'] }));
 		getProgram.mockImplementation(() => ({ script: 'start' }));
 		isIgnoredPackage.mockImplementation(() => true);
-		runNpmScripts('start');
+		runNpmScripts();
 	});
 	it('packages in state', () => {
 		getState.mockImplementation(() => ({}));
@@ -50,7 +50,7 @@ describe('runNpmScripts', () => {
 		isIgnoredPackage.mockImplementation(() => false);
 		basename.mockImplementation(_path => _path.split('/')[4]);
 		runNpmScript.mockImplementation(() => 'terminal');
-		expect(runNpmScripts('start')).toEqual({
+		expect(runNpmScripts()).toEqual({
 			ui: { log: [], terminal: 'terminal' },
 			utils: { log: [], terminal: 'terminal' },
 		});
@@ -67,7 +67,7 @@ describe('runNpmScripts', () => {
 			onRecieve('test\n');
 			onRecieve('test2');
 		});
-		expect(runNpmScripts('start').utils.log).toEqual(['test', '', 'test2']);
+		expect(runNpmScripts().utils.log).toEqual(['test', '', 'test2']);
 	});
 	it('package.terminal.onError -> update log', () => {
 		getState.mockImplementation(() => ({}));
@@ -81,7 +81,7 @@ describe('runNpmScripts', () => {
 			onError('test\n');
 			onError('test2');
 		});
-		expect(runNpmScripts('start').utils.log).toEqual(['test', '', 'test2']);
+		expect(runNpmScripts().utils.log).toEqual(['test', '', 'test2']);
 	});
 	it('package.terminal.onExit -> update log', () => {
 		getState.mockImplementation(() => ({}));
@@ -94,7 +94,7 @@ describe('runNpmScripts', () => {
 		runNpmScript.mockImplementation(({ onExit }) => {
 			onExit();
 		});
-		expect(runNpmScripts('start').utils.log).toEqual(['stop: utils']);
+		expect(runNpmScripts().utils.log).toEqual(['stop: utils']);
 	});
 	it('package.terminal.onRecieve \x1Bc -> clear log', () => {
 		getState.mockImplementation(() => ({}));
@@ -107,7 +107,7 @@ describe('runNpmScripts', () => {
 		runNpmScript.mockImplementation(({ onRecieve }) => {
 			onRecieve('\x1Bc');
 		});
-		expect(runNpmScripts('start').utils.log).toEqual(['']);
+		expect(runNpmScripts().utils.log).toEqual(['']);
 	});
 	it('package.terminal.onError \x1Bc -> clear log', () => {
 		getState.mockImplementation(() => ({}));
@@ -120,6 +120,6 @@ describe('runNpmScripts', () => {
 		runNpmScript.mockImplementation(({ onError }) => {
 			onError('\x1Bc');
 		});
-		expect(runNpmScripts('start').utils.log).toEqual(['']);
+		expect(runNpmScripts().utils.log).toEqual(['']);
 	});
 });
