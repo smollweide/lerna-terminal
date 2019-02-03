@@ -57,7 +57,15 @@
       "!src/log.js",
       "!src/resolve/index.js",
       "!src/resolve/resolve-dependency.js"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 99,
+        "functions": 99,
+        "lines": 99,
+        "statements": 99
+      }
+    }
   },
   "commitlint": {
     "extends": [
@@ -89,7 +97,6 @@
     "eslint": "5.8.0",
     "eslint-plugin-import": "2.14.0",
     "husky": "0.14.3",
-    "istanbul": "0.4.5",
     "jest": "23.6.0",
     "jest-cli": "23.6.0",
     "lint-staged": "7.2.0",
@@ -110,21 +117,20 @@
   "scripts": {
     "cz": "git-cz",
     "commitmsg": "commitlint -e $GIT_PARAMS",
-    "precommit": "lint-staged && npm-run-all lint test check-coverage",
+    "precommit": "lint-staged && npm-run-all lint test",
     "prebuild": "rimraf dist",
-    "build": "node_modules/.bin/babel --out-dir dist --ignore *.spec.js src",
-    "start": "node_modules/.bin/babel --watch --out-dir dist --ignore *.spec.js src",
+    "build": "babel --out-dir dist --ignore *.spec.js src",
+    "start": "babel --watch --out-dir dist --ignore *.spec.js src",
     "prepack": "rimraf lerna-terminal-0.0.0-semantically-released.tgz package",
     "pack": "npm pack && open lerna-terminal-0.0.0-semantically-released.tgz",
-    "check-coverage": "node_modules/.bin/istanbul check-coverage --statements 99 --branches 99 --functions 99 --lines 99",
-    "report-coverage": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
+    "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "pretest": "rimraf coverage",
-    "test": "cross-env NODE_ENV=test node_modules/.bin/jest --coverage",
-    "test:dev": "cross-env NODE_ENV=test node_modules/.bin/jest --watch --coverage",
-    "test:single": "cross-env NODE_ENV=test node_modules/.bin/jest",
+    "test": "cross-env NODE_ENV=test jest --coverage",
+    "test:dev": "cross-env NODE_ENV=test jest --watch --coverage",
+    "test:single": "cross-env NODE_ENV=test jest",
     "lint": "npm-run-all lint:*",
-    "lint:js": "node_modules/.bin/eslint .",
-    "prettier": "node_modules/.bin/prettier --write 'src/**/*.js' 'bin/**/*.js' --config package.json",
+    "lint:js": "eslint .",
+    "prettier": "prettier --write 'src/**/*.js' 'bin/**/*.js' --config package.json",
     "semantic-release": "semantic-release"
   }
 }
